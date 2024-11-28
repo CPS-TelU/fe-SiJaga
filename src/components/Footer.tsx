@@ -68,9 +68,12 @@ export default function Footer() {
                             </a>
                         </div>
                     </div>
+                    
                 </div>
 
-                {/* Bagian copyright */}
+                <div className="container mx-auto px-20">
+                    <hr className="my-6 border-gray-300 opacity-50" />
+                </div>
                 <div className="flex justify-center mt-8">
                     <p>&copy; 2024 Cyber Physical System</p>
                 </div>

@@ -1,10 +1,12 @@
 import React from "react"
-import Home from "@/src/components/contents/Home"
+import Home from "@/src/components/contents/HeroHome"
 
 
 const LandingPage = () => {
     return(
-        <Home/>
+        <div className="w-full">
+            <Home/>
+        </div>
     )
 }
 export default LandingPage
