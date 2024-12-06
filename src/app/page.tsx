@@ -4,7 +4,6 @@ import Footer from "../components/Footer";
 import { jakarta } from "@/styles/fonts";
 import Header from "../components/Header";
 
-
 export default function Home() {
   return (
     <main className={`${jakarta.className}  z-[999]`}>
