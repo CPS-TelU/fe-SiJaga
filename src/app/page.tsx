@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { jakarta } from "@/styles/fonts";
 import Header from "../components/Header";
 import DashboardLayout from "../components/layouts/DashboardLayout";
+import SettingLayout from "../components/layouts/SettingLayout";
 
 export default function Home() {
   return (
@@ -13,7 +14,9 @@ export default function Home() {
       
       <Footer/> */
       
-      <DashboardLayout /> }
+     /* <DashboardLayout /> */
+    
+      <SettingLayout/>}
     </main>
   );
 }
