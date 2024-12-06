@@ -31,19 +31,19 @@ const StatusCard: React.FC<StatusCardProps> = ({
   <div
     className={`flex ${
       iconPosition === "top" ? "flex-col items-center space-y-2" : "items-center space-x-4"
-    } ${color} p-6 rounded-lg shadow-md`}
+    } ${color} p-6 rounded-3xl shadow-md`}
   >
     {/* Ikon */}
     <img
     src= {icon} 
     alt={label} 
-    className={`p-2 rounded-xl ${iconSize}`}
+    className={`p-2 rounded-3xl ${iconSize}`}
     width={width}
     height={height}
     />
-    {/* Status Text */}
+
     {statusText && <p className={`${statusTextColor} text-sm font-medium`}>{statusText}</p>}
-    {/* Label */}
+
     <p className={`${labelColor} font-semibold text-lg`}>{label}</p>
   </div>
 );

@@ -1,12 +1,13 @@
 import React from "react";
 import Sidebar from "../Sidebar";
-import DashboardSection from "../sections/DashboardSection";
-import RecentActivitySection from "../sections/RecentActivitySection";
+import DashboardSection from "../contents/sections Dash/DashboardSection";
+import RecentActivitySection from "../contents/sections Dash/RecentActivitySection";
 const DashboardLayout: React.FC = () => {
   return (
+    
     <div className="flex min-h-screen"> 
       <Sidebar />
-      <main className="flex-1 p-6">
+      <main className="p-6 w-full">
         <DashboardSection />
         <RecentActivitySection />
       </main>

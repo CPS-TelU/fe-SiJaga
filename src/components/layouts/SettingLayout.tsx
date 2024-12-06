@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from '../ui/Sidebar';  // Pastikan Sidebar sudah ada dan siap digunakan
+import Sidebar from '../Sidebar'; 
 import SettingSection from '../settings/SettingSection'; // Pastikan SettingSection sudah ada dan siap digunakan
 
 interface PageProps {

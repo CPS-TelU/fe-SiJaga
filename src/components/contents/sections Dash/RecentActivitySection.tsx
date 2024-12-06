@@ -1,10 +1,10 @@
 import React from "react";
-import Card from "../ui/Card";
+import Card from "../../ui/Card";
 import { FiUsers, FiClock, FiKey } from "react-icons/fi";
 
 const RecentActivitySection: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8" >
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pr-8" >
       {/* 3 Pengguna Terakhir */}
       <Card title="3 Pengguna Terakhir" icon={<FiUsers size={48} />}>
         <ul className="space-y-2">
