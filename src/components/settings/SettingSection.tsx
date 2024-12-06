@@ -1,15 +1,26 @@
+'use client'; // Menandai SettingSection sebagai komponen klien
+
 import React from 'react';
-import Card from '../ui/CardSettings'
+import Card from '../ui/CardSettings';
 import TextContent from '../contents/TextContent';
 
-const SettingSection: React.FC = () => {
+interface SettingSectionProps {
+  onRegisterSuccess: () => void;
+}
+
+const SettingSection: React.FC<SettingSectionProps> = ({ onRegisterSuccess }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onRegisterSuccess(); // Panggil fungsi ketika pendaftaran berhasil
+  };
+
   return (
     <Card>
       <TextContent
         title="Tambahkan Kredensial Kartu Baru"
         description="Masukkan informasi kartu untuk memberikan akses baru."
       />
-      <form className="mt-4 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">UID</label>
           <input

@@ -1,12 +1,21 @@
-import React from 'react';
-import Sidebar from '../Sidebar';  // Pastikan Sidebar sudah ada dan siap digunakan
-import SettingSection from '../settings/SettingSection'; // Pastikan SettingSection sudah ada dan siap digunakan
+'use client'; // Menandai SettingLayout sebagai komponen klien
+
+import React, { useState } from 'react';
+import Sidebar from '../Sidebar'; // Sidebar Anda
+import SettingSection from '../settings/SettingSection'; // SettingSection Anda
 import Setting from '../settings/Setting';
+
 interface PageProps {
-  children?: React.ReactNode; // Menjadikan children opsional
+  children?: React.ReactNode;
 }
 
 const SettingLayout: React.FC<PageProps> = ({ children }) => {
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const handleRegisterSuccess = () => {
+    setIsRegistered(true);
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-100 text-gray-800">
       {/* Sidebar */}
@@ -14,9 +23,9 @@ const SettingLayout: React.FC<PageProps> = ({ children }) => {
 
       {/* Main Content */}
       <div className="flex-1 p-4">
-        {/* Setting Section, bisa diubah sesuai kebutuhan */}
-        <SettingSection />
-        <Setting />
+        {/* Passing handleRegisterSuccess as a prop */}
+        <SettingSection onRegisterSuccess={handleRegisterSuccess} />
+        <Setting isRegistered={isRegistered} />
         
         {/* Konten yang diterima sebagai children */}
         <div className="mt-4">

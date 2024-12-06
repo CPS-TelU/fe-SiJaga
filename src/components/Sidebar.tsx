@@ -21,14 +21,14 @@ const Sidebar: React.FC = () => {
       </nav>
 
       {/* Tombol Logout */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center ">
         {/* Garis Horizontal */}
-        <div className="w-full h-[1px] bg-white mb-1"></div>
+        <div className="w-full h-[1px] bg-white"></div>
       <button className="mt-4 mb-2 hover:bg-[#1D2D44]">
         <img
           src="/logout.png" // Ganti dengan path gambar Anda
           alt="Logout"
-          className="w-6 h-6 md:w-8 md:h-8"
+          className="w-6 h-6 md:w-8 md:h-8 my-[-8px] mt-2"
           />
       </button>
     </div>
