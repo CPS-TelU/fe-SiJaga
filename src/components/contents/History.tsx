@@ -95,25 +95,28 @@ const History = () => {
               </div>
 
               {/* Filter */}
-              <div className="flex gap-4 mb-6 text-[#3650A2]">
-                <button className="flex items-center justify-between w-40 px-4 py-2 border border-gray-300 rounded-full bg-gray-100">
-                  Waktu
-                  <Image
-                    src="/dropdown-icon.png"
-                    alt="Dropdown Icon"
-                    width={16}
-                    height={16}
-                  />
-                </button>
-                <button className="flex items-center justify-between w-40 px-4 py-2 border border-gray-300 rounded-full bg-gray-100">
-                  Kondisi
-                  <Image
-                    src="/dropdown-icon.png"
-                    alt="Dropdown Icon"
-                    width={16}
-                    height={16}
-                  />
-                </button>
+              <div className="mb-6">
+                <p className="text-sm font-medium font-bold text-[#3650A2] mb-2">Filter</p>
+                <div className="flex gap-4 text-[#3650A2]">
+                  <button className="flex items-center justify-between w-40 px-4 py-2 border border-gray-300 rounded-full bg-gray-100">
+                    Waktu
+                    <Image
+                      src="/dropdown-icon.png"
+                      alt="Dropdown Icon"
+                      width={16}
+                      height={16}
+                    />
+                  </button>
+                  <button className="flex items-center justify-between w-40 px-4 py-2 border border-gray-300 rounded-full bg-gray-100">
+                    Kondisi
+                    <Image
+                      src="/dropdown-icon.png"
+                      alt="Dropdown Icon"
+                      width={16}
+                      height={16}
+                    />
+                  </button>
+                </div>
               </div>
 
               {/* Table */}
