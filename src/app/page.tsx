@@ -4,11 +4,12 @@ import Footer from "../components/Footer";
 import { jakarta } from "@/styles/fonts";
 import Header from "../components/Header";
 
+
 export default function Home() {
   return (
-    <main className={`${jakarta.className} pt-12 z-[999]`}>
+    <main className={`${jakarta.className}  z-[999]`}>
       <Header/>
-      <LandingPage/>
+        <LandingPage/>
       <Footer/>
     </main>
   );
