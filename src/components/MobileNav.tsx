@@ -1,26 +1,45 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { jakarta } from "@/styles/fonts";
 
 export default function MobileNav() {
     const [isOpen, setIsOpen] = useState(false);
+    const navRef = useRef<HTMLDivElement>(null);
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event : MouseEvent) => {
+            if (navRef.current && !navRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen]);
 
     return (
-        <nav className={`${jakarta.className} lg:hidden bg-[#3650A2] fixed top-0 start-0 z-50 w-full border-b border-gray-200 overflow-y-auto max-h-screen`}>
+        <nav
+            ref={navRef}
+            className={`${jakarta.className} lg:hidden bg-[#3650A2] fixed top-0 start-0 z-50 w-full border-b border-gray-200 overflow-y-auto max-h-screen`}
+        >
             <div className="container max-w-screen-xl mx-auto flex items-center justify-between p-4">
                 {/* Logo */}
-                <Link
-                    href="/"
-                    className="flex items-center gap-2 ml-4"
-                >
+                <Link href="/" className="flex items-center gap-2 ml-4">
                     <Image
                         src="/Group 342.png"
                         className="h-8"
                         alt="Logo"
                         width={30}
                         height={50}
-                        
                     />
                     <span className="text-2xl font-semibold text-white ">
                         SiJaga
