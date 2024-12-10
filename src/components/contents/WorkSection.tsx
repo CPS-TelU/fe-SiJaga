@@ -3,7 +3,7 @@ import { jakarta } from "@/styles/fonts";
 
 export default function CaraKerja() {
     return (
-        <section className={`${jakarta.className} lg:min-h-screen md:pt-20 pt-20 flex items-center justify-center px-8 pb-12 bg-[url('/Element.png')]`}>
+        <section className={`${jakarta.className} lg:min-h-screen md:pt-20 pt-20 flex items-center justify-center px-8 pb-12 bg-[url('/bg-string2.png')]`}>
             <div className="relative flex items-center justify-center w-1/2">
     
                 <div className="relative rounded-full p-4">
@@ -31,7 +31,7 @@ export default function CaraKerja() {
                     className="absolute left-4 lg:left-36 bottom-1 md:left-8 md:bottom-0"
                     />
                 </div>
-                <ul className="text-sm sm:text-base text-gray-600 space-y-2 mt-8 md:text-md">
+                <ul className="text-sm sm:text-base text-gray-600 space-y-2 mt-8 md:text-md list-image-[url('/.png')]">
                     <li>Tempel kartu akses pada pemindai untuk membuka loker.</li>
                     <li>
                         Masukkan barang yang ingin disimpan ke dalam loker.
