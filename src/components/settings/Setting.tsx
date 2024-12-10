@@ -20,7 +20,7 @@ const Setting: React.FC<SettingProps> = ({ isRegistered }) => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row lg:space-x-6 w-full">
+  //   <div className="flex flex-col lg:flex-row lg:space-x-6 w-full">
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2 transform -translate-y-96">
         <div className="text-blue-700 flex flex-col items-center ml-10 transform -translate-y-32">
           <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 mr-[600px] mt-[-80px]">
@@ -52,7 +52,7 @@ const Setting: React.FC<SettingProps> = ({ isRegistered }) => {
           </p>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 

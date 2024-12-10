@@ -30,7 +30,7 @@ const StatusCard: React.FC<StatusCardProps> = ({
 }) => (
   <div
     className={`flex ${
-      iconPosition === "top" ? "flex-col items-center space-y-2" : "items-center space-x-4"
+      iconPosition === "top" ? "flex-col items-center " : "items-center space-x-4"
     } ${color} p-6 rounded-lg shadow-md`}
   >
     {/* Ikon */}
