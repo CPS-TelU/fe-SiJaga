@@ -39,8 +39,7 @@ const History = () => {
   };
 
   return (
-    <div className={`${jakarta.className} bg-gray-100`}>
-      <Header />
+    <div className={`${jakarta.className}`}>
 
       <div className="min-h-screen flex mb-14">
         <div>
@@ -177,8 +176,6 @@ const History = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { FiHome, FiSettings, FiClock } from "react-icons/fi";
 
 const Sidebar: React.FC = () => {
   return (
-    <div className="bg-[#3650A2] min-h-screen text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center py-6 ml-10 mt-10 rounded-3xl  h-[116vh]">
+    <div className="bg-[#3650A2] text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center py-6 ml-10 mt-10 rounded-3xl  h-[116vh]">
       {/* Bagian Navigasi */}
       <nav className="space-y-6">
         <button className="flex flex-col items-center text-sm hover:bg-[#1D2D44] p-3 rounded-lg">
