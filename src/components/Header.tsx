@@ -52,9 +52,12 @@ export const Header = () => {
                             className="absolute left-0 bottom-[-2px] w-0 h-[2px] bg-blue-800 transition-all duration-300 group-hover:w-full group-hover:left-auto group-hover:right-0"
                         ></span>
                     </Link>
-                    <button className="bg-blue-800 text-white px-6 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
-                    Masuk
-                </button>
+                    <Link
+                        href="/dashboard"
+                        className="bg-blue-800 text-white px-6 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition"
+                    >
+                        Masuk
+                    </Link>
                 </div>
 
                 {/* Login Button */}

@@ -5,7 +5,7 @@ import RecentActivitySection from "../contents/sections Dash/RecentActivitySecti
 const DashboardLayout: React.FC = () => {
   return (
     
-    <div className="flex min-h-screen"> 
+    <div className="flex "> 
       <Sidebar />
       <main className="p-6 w-full">
         <DashboardSection />
