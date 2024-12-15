@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../Sidebar';
 import SettingSection from '../settings/SettingSection';
-import Setting from '../settings/Setting';
+// import Setting from '../settings/Setting';
 import { jakarta } from '@/styles/fonts';
 
 const SettingLayout: React.FC = () => {
@@ -20,7 +20,7 @@ const SettingLayout: React.FC = () => {
       {/* Main Content */}
       <div className={`${jakarta.className} flex-1 p-4`}>
         <SettingSection onRegisterSuccess={handleRegisterSuccess} />
-        <Setting isRegistered={isRegistered} />
+        {/* <Setting isRegistered={isRegistered} /> */}
       </div>
     </div>
   );
