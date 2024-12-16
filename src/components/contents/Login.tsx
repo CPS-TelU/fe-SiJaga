@@ -27,7 +27,6 @@ const Login = () => {
             Makin Aman <br /> Bersama{" "}
             <span className="text-[#3650A2]">SiJaga</span>
           </h1>
-          {/* Gambar Vector */}
           <div className="ml-32 flex justify-center items-center">
             <Image
               src="/Vector.png"
@@ -37,7 +36,6 @@ const Login = () => {
               className="max-w-full h-auto"
             />
           </div>
-          {/* Gambar Locker */}
           <div className="mt-4 md:mt-6">
             <Image
               src="/Gambar Locker.png"
@@ -52,7 +50,6 @@ const Login = () => {
         {/* Right Section (Card) */}
         <div className="md:col-span-4 flex justify-center">
           <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 md:p-12 max-w-[850px] w-full">
-            {/* Header */}
             <div className="flex flex-col items-left mb-6">
               <Image
                 src="/logo sijaga white.png"
@@ -67,9 +64,7 @@ const Login = () => {
               </p>
             </div>
 
-            {/* Form */}
             <form className="space-y-5 md:space-y-6">
-              {/* Username Input */}
               <div>
                 <label
                   htmlFor="username"
@@ -84,8 +79,6 @@ const Login = () => {
                   className="mt-1 block w-full px-4 py-2 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
-
-              {/* Password Input */}
               <div>
                 <label
                   htmlFor="password"
@@ -114,8 +107,6 @@ const Login = () => {
                   </button>
                 </div>
               </div>
-
-              {/* Submit Button */}
               <div>
                 <Link
                   href="/dashboard"
