@@ -1,11 +1,57 @@
 "use client";
 import { useState } from "react";
 import { jakarta } from "../../../styles/fonts";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Cookies from "js-cookie"; // Import js-cookie
+import axios from "axios";
 
-const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
+const LoginPage: React.FC = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const LOGIN_API_URL = `${API_BASE_URL}/user/login`;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axios.post(
+        LOGIN_API_URL,
+        {
+          username,
+          password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { token } = response.data;
+      Cookies.set("token", token, { expires: 7 }); // Simpan token dalam cookie selama 7 hari
+      console.log("Login success, token saved. Redirecting to LMS...");
+      router.push("/lms"); // Redirect ke dashboard LMS
+    } catch (err) {
+      // Tangani error dan tampilkan pesan error
+      if (axios.isAxiosError(err) && err.response) {
+        const errorMessage = err.response.data.message || "Login failed. Please check your credentials.";
+        setError(errorMessage);
+      } else {
+        setError("An unknown error occurred. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={`${jakarta.className} min-h-screen flex items-center justify-center`}>
@@ -64,7 +110,7 @@ const Login = () => {
               </p>
             </div>
 
-            <form className="space-y-5 md:space-y-6">
+            <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="username"
@@ -76,6 +122,8 @@ const Login = () => {
                   id="username"
                   type="text"
                   placeholder="Nama Pengguna"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="mt-1 block w-full px-4 py-2 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
@@ -91,6 +139,8 @@ const Login = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Kata Sandi"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="mt-1 block w-full px-4 py-2 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   />
                   <button
@@ -108,12 +158,12 @@ const Login = () => {
                 </div>
               </div>
               <div>
-                <Link
-                  href="/dashboard"
+                <button
+                  type="submit"
                   className="w-full bg-[#FFE492] text-[#3650A2] font-semibold py-2 rounded-xl shadow-md hover:bg-yellow-400 transition flex items-center justify-center"
                 >
                   Masuk
-                </Link>
+                </button>
               </div>
             </form>
           </div>
@@ -123,4 +173,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

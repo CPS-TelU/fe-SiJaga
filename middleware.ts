@@ -16,5 +16,5 @@ export function middleware(req: NextRequest) {
 
 // Tentukan rute mana saja yang dilindungi middleware ini
 export const config = {
-  matcher: ["/dashboard/:path*", "/settings/:path*", "/riwayat/:path*"], // Lindungi semua rute di bawah /lms
+  matcher: ["/dashboard/:path*", "/settingspage/:path*", "/riwayat/:path*"], // Lindungi semua rute di bawah /lms
 };

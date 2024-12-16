@@ -1,27 +1,22 @@
 'use client';
+
 import React, { useState } from 'react';
-import Sidebar from '../Sidebar';
-import SettingSection from '../settings/SettingSection';
-// import Setting from '../settings/Setting';
-import { jakarta } from '@/styles/fonts';
+import SettingSection from '../contents/SettingSection';  // Sesuaikan dengan path yang benar
 
 const SettingLayout: React.FC = () => {
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false); // Atur state isRegistered sesuai kebutuhan
 
   const handleRegisterSuccess = () => {
-    setIsRegistered(true);
+    setIsRegistered(true); // Setel state ketika pendaftaran berhasil
   };
 
   return (
-    <div className=" flex bg-gray-100 text-gray-800">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <div className={`${jakarta.className} flex-1 p-4`}>
-        <SettingSection onRegisterSuccess={handleRegisterSuccess} />
-        {/* <Setting isRegistered={isRegistered} /> */}
-      </div>
+    <div>
+      {/* Pass isRegistered and onRegisterSuccess to SettingSection */}
+      <SettingSection 
+        isRegistered={isRegistered} 
+        onRegisterSuccess={handleRegisterSuccess} 
+      />
     </div>
   );
 };
