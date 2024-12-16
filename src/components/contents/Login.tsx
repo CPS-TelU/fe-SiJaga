@@ -117,12 +117,12 @@ const Login = () => {
 
               {/* Submit Button */}
               <div>
-                <button
-                  type="submit"
-                  className="w-full bg-[#FFE492] text-[#3650A2] font-semibold py-2 rounded-xl shadow-md hover:bg-yellow-400 transition"
+                <Link
+                  href="/dashboard"
+                  className="w-full bg-[#FFE492] text-[#3650A2] font-semibold py-2 rounded-xl shadow-md hover:bg-yellow-400 transition flex items-center justify-center"
                 >
                   Masuk
-                </button>
+                </Link>
               </div>
             </form>
           </div>
