@@ -1,26 +1,26 @@
-import React from 'react';
-import Sidebar from '../Sidebar'; 
-import SettingSection from '../settings/SettingSection'; // Pastikan SettingSection sudah ada dan siap digunakan
+'use client';
+import React, { useState } from 'react';
+import Sidebar from '../Sidebar';
+import SettingSection from '../settings/SettingSection';
+// import Setting from '../settings/Setting';
+import { jakarta } from '@/styles/fonts';
 
-interface PageProps {
-  children?: React.ReactNode; // Menjadikan children opsional
-}
+const SettingLayout: React.FC = () => {
+  const [isRegistered, setIsRegistered] = useState(false);
 
-const SettingLayout: React.FC<PageProps> = ({ children }) => {
+  const handleRegisterSuccess = () => {
+    setIsRegistered(true);
+  };
+
   return (
-    <div className="min-h-screen flex bg-gray-100 text-gray-800">
+    <div className=" flex bg-gray-100 text-gray-800">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-4">
-        {/* Setting Section, bisa diubah sesuai kebutuhan */}
-        <SettingSection />
-        
-        {/* Konten yang diterima sebagai children */}
-        <div className="mt-4">
-          {children}
-        </div>
+      <div className={`${jakarta.className} flex-1 p-4`}>
+        <SettingSection onRegisterSuccess={handleRegisterSuccess} />
+        {/* <Setting isRegistered={isRegistered} /> */}
       </div>
     </div>
   );
