@@ -9,7 +9,7 @@ const Sidebar: React.FC = () => {
       <nav className="space-y-6">
         <Link
           href="/dashboard"
-          className="group flex flex-col items-center text-sm p-3 rounded-lg transition duration-300"
+          className="flex flex-col items-center text-sm hover:bg-[#1D2D44] p-3 rounded-lg"
         >
           <FiHome
             size={24}
@@ -23,12 +23,9 @@ const Sidebar: React.FC = () => {
           href="/riwayat"
           className="group flex flex-col items-center text-sm p-3 rounded-lg transition duration-300"
         >
-          <FiClock
-            size={24}
-            className="transition duration-300 transform group-hover:scale-125"
-          />
-          <span className="mt-1 hidden md:block text-xs font-semibold transition duration-300 transform group-hover:scale-110">
-            Riwayat
+          <FiClock size={24} />
+          <span className="mt-1 hidden md:block text-xs font-semibold">
+            History
           </span>
         </Link>
         <Link
@@ -49,14 +46,11 @@ const Sidebar: React.FC = () => {
       <div className="flex flex-col items-center">
         {/* Garis Horizontal */}
         <div className="w-full h-[1px] bg-white mb-1"></div>
-        <Link
-          href="/"
-          className="group mt-4 mb-2 rounded-lg"
-        >
+        <Link href="/" className="mt-4 mb-2 hover:bg-[#1D2D44] p-1 rounded-lg">
           <img
             src="/logout.png"
             alt="Logout"
-            className="w-6 h-6 md:w-8 md:h-8 transition duration-300 transform group-hover:scale-125"
+            className="w-4 h-6 md:w-8 md:h-6"
           />
         </Link>
       </div>
