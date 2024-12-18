@@ -32,7 +32,6 @@ export default function Footer() {
                             https://sukapura.digital/
                         </a>
                         <p className="text-sm">
-                            Jl. Sukapura No.54, Sukapura, Kec. Dayeuhkolot, Bandung, Jawa Barat 40267
                         </p>
                         <p className="text-sm">(022) 87523248</p>
                     </div>
