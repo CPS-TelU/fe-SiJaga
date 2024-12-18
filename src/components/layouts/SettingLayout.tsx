@@ -1,27 +1,22 @@
-import React from 'react';
-import Sidebar from '../Sidebar'; 
-import SettingSection from '../settings/SettingSection'; // Pastikan SettingSection sudah ada dan siap digunakan
+'use client';
 
-interface PageProps {
-  children?: React.ReactNode; // Menjadikan children opsional
-}
+import React, { useState } from 'react';
+import SettingSection from '../contents/SettingSection';  // Sesuaikan dengan path yang benar
 
-const SettingLayout: React.FC<PageProps> = ({ children }) => {
+const SettingLayout: React.FC = () => {
+  const [isRegistered, setIsRegistered] = useState(false); // Atur state isRegistered sesuai kebutuhan
+
+  const handleRegisterSuccess = () => {
+    setIsRegistered(true); // Setel state ketika pendaftaran berhasil
+  };
+
   return (
-    <div className="min-h-screen flex bg-gray-100 text-gray-800">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 p-4">
-        {/* Setting Section, bisa diubah sesuai kebutuhan */}
-        <SettingSection />
-        
-        {/* Konten yang diterima sebagai children */}
-        <div className="mt-4">
-          {children}
-        </div>
-      </div>
+    <div>
+      {/* Pass isRegistered and onRegisterSuccess to SettingSection */}
+      <SettingSection 
+        isRegistered={isRegistered} 
+        onRegisterSuccess={handleRegisterSuccess} 
+      />
     </div>
   );
 };
