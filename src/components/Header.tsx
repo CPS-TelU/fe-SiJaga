@@ -53,7 +53,7 @@ export const Header = () => {
                         ></span>
                     </Link>
                     <Link
-                        href="/dashboard"
+                        href="/login"
                         className="bg-blue-800 text-white px-6 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition"
                     >
                         Masuk
