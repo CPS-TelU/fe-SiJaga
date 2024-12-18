@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 
@@ -18,6 +18,8 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [confirm, setConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cardId, setCardId] = useState<string | null>(null); // State untuk menyimpan card ID
+
 
   const handleRegisterSuccess = () => {
     setCurrentImage("/scanimage-success.png");
@@ -52,6 +54,18 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const fetchCardId = async () => {
+      try {
+        const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
+        setCardId(response.data.cardId); // Simpan hasil fetch ke state
+      } catch (error) {
+        console.error('Error fetching card ID:', error);
+      }
+    };
+  
+    fetchCardId();
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row w-full space-y-6 lg:space-y-0 lg:space-x-6">
@@ -87,6 +101,12 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           </p>
         </div>
       </div>
+        {/* Card ID Terbaru */}
+        <div>
+          <h3 className="text-lg font-semibold mt-4">Card ID Terbaru:</h3>
+          <p className="text-gray-800">{cardId || 'Memuat...'}</p>
+        </div>
+      
 
       {/* Bagian Kanan */}
       <div className="w-full lg:w-1/2">

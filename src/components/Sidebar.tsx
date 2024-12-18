@@ -1,7 +1,9 @@
+"use client";
 import Link from "next/link";
 import React from "react";
 import { FiHome, FiSettings, FiClock } from "react-icons/fi";
-import { useRouter } from "next/router"; // For redirecting after logout
+import { useRouter } from "next/navigation";
+ // For redirecting after logout
 
 const Sidebar: React.FC = () => {
   const router = useRouter(); // To redirect after logout

@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import SettingSection from '../contents/SettingSection';  // Sesuaikan dengan path yang benar
-
+import Sidebar from '../Sidebar';
+import { jakarta } from '@/styles/fonts';
 const SettingLayout: React.FC = () => {
   const [isRegistered, setIsRegistered] = useState(false); // Atur state isRegistered sesuai kebutuhan
 
@@ -11,12 +12,19 @@ const SettingLayout: React.FC = () => {
   };
 
   return (
-    <div>
-      {/* Pass isRegistered and onRegisterSuccess to SettingSection */}
+    <div className=" flex bg-gray-100 text-gray-800">
+      {/* Sidebar */}
+      <Sidebar />
+
+      {/* Main Content */}
+      <div className={`${jakarta.className} flex-1 p-4`}>
       <SettingSection 
-        isRegistered={isRegistered} 
-        onRegisterSuccess={handleRegisterSuccess} 
-      />
+  isRegistered={isRegistered} 
+  onRegisterSuccess={handleRegisterSuccess} 
+/>
+
+        {/* <Setting isRegistered={isRegistered} /> */}
+      </div>
     </div>
   );
 };
