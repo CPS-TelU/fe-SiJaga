@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
       const response = await axios.post(
         LOGIN_API_URL,
         {
-          email, // Ganti dari username menjadi email
+          email, 
           password,
         },
         {
