@@ -4,9 +4,9 @@ import History from "../contents/History";
 const HistoryLayout: React.FC = () => {
   return (
     
-    <div className="flex bg-[url('/bg-string2.png')] "> 
+    <div className="flex bg-[url('/bg-string2.png')]  bg-cover bg-center "> 
       <Sidebar />
-      <main className="p-6 w-full ">
+      <main className="w-full ">
         <History/>
       </main>
     </div>
