@@ -23,18 +23,20 @@ const History = () => {
   const [historyData, setHistoryData] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [profileName, setProfileName] = useState(""); // Default name
+  const [profileName, setProfileName] = useState("");
+  const [filteredHistoryData, setFilteredHistoryData] = useState<HistoryItem[]>([]);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch user profile
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const token = Cookies.get("token"); // Ambil token dari localStorage
+      const token = Cookies.get("token");
       const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-ess/whoami`;
 
       if (!token) {
         console.error("Token tidak ditemukan.");
         setError("Autentikasi gagal. Harap login kembali.");
+        router.push("/login");
         return;
       }
 
@@ -66,23 +68,24 @@ const History = () => {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [router]);
 
+  // Fetch history data
   useEffect(() => {
     const fetchHistory = async () => {
       setLoading(true);
       setError("");
-  
+
       const token = Cookies.get("token");
       const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
-  
+
       if (!token) {
         setError("Token tidak ditemukan. Silakan login kembali.");
         router.push("/login");
         setLoading(false);
         return;
       }
-  
+
       try {
         const response = await fetch(apiUrl, {
           method: "GET",
@@ -91,16 +94,17 @@ const History = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         if (!response.ok) {
           throw new Error(
             `Gagal mengambil data: ${response.status} - ${response.statusText}`
           );
         }
-  
+
         const responseData = await response.json();
         if (responseData.success && Array.isArray(responseData.usageHistory)) {
           setHistoryData(responseData.usageHistory);
+          setFilteredHistoryData(responseData.usageHistory); // Tampilkan semua data di awal
         } else {
           throw new Error("Data yang diterima tidak valid.");
         }
@@ -111,9 +115,9 @@ const History = () => {
         setLoading(false);
       }
     };
-  
+
     fetchHistory();
-  }, [router]);  
+  }, [router]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -136,15 +140,20 @@ const History = () => {
   };
 
   const handleSearch = () => {
-    console.log("Mencari dengan nama:", searchQuery);
+    if (!searchQuery.trim()) {
+      setFilteredHistoryData(historyData);
+    } else {
+      const filteredData = historyData.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredHistoryData(filteredData);
+    }
   };
 
   return (
     <div className={`${jakarta.className}`}>
       <div className="min-h-screen flex mb-14">
-        <div>
-          <Sidebar />
-        </div>
+        <Sidebar />
 
         {/* Main Content */}
         <div className="w-full lg:w-4/5 container mx-auto px-4 py-10">
@@ -186,46 +195,6 @@ const History = () => {
               </button>
             </div>
 
-            {/* Filter */}
-            <div className="mb-6">
-              <p className="text-sm font-medium font-bold text-[#3650A2] mb-2">Filter</p>
-              <div className="flex gap-4 text-[#3650A2]">
-                <button className="flex items-center justify-between w-40 px-4 py-2 rounded-full bg-gray-100">
-                  Waktu
-                  <Image src="/dropdown-icon.png" alt="Dropdown Icon" width={16} height={16} />
-                </button>
-
-                <div ref={dropdownRef} className="relative w-40">
-                  <button
-                    onClick={toggleDropdown}
-                    className="flex items-center justify-between w-full px-4 py-2 rounded-full bg-gray-100"
-                  >
-                    {selectedCondition}
-                    <Image src="/dropdown-icon.png" alt="Dropdown Icon" width={16} height={16} />
-                  </button>
-
-                  {isDropdownOpen && (
-                    <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
-                      <ul className="py-2">
-                        <li
-                          onClick={() => handleSelection("Terbuka")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Terbuka
-                        </li>
-                        <li
-                          onClick={() => handleSelection("Tertutup")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Tertutup
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {/* Table */}
             {error ? (
               <p className="text-center text-red-500">{error}</p>
@@ -242,10 +211,12 @@ const History = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {historyData.map((item, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
+                  {filteredHistoryData.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50">
                       <td className="py-3">
-                        {new Date(item.Timestamp).toLocaleString()}
+                        {new Date(item.Timestamp).toLocaleString("en-US", {
+                          timeZone: "UTC",
+                        })}
                       </td>
                       <td className="py-3">{item.name}</td>
                       <td className="py-3">{item.status}</td>
