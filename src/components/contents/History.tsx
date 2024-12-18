@@ -39,7 +39,7 @@ const History = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Sertakan token di header
+            Authorization: `Bearer ${token}`,
           },
         });
 
