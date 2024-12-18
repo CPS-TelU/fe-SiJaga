@@ -5,7 +5,7 @@ import RecentActivitySection from "../contents/sections Dash/RecentActivitySecti
 const DashboardLayout: React.FC = () => {
   return (
     
-    <div className="flex bg-[url('/bg-string2.png')] "> 
+    <div className="flex bg-[url('/bg-string2.png')] bg-cover bg-center "> 
       <Sidebar />
       <main className="p-6 w-full ">
         <DashboardSection />

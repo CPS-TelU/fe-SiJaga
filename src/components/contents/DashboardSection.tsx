@@ -5,7 +5,7 @@ import { jakarta } from "@/styles/fonts";
 const DashboardSection: React.FC = () => {
   return (
     <div
-      className={` ${jakarta.className} py-12 px-6  bg-cover bg-center min-y-screen `}
+      className={` ${jakarta.className} py-12 px-6  min-y-screen `}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-8">

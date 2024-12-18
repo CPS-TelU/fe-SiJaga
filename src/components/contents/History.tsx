@@ -130,10 +130,7 @@ const History = () => {
   return (
     <div className={`${jakarta.className}`}>
       <div className="min-h-screen flex mb-14">
-        <div>
-          <Sidebar />
-        </div>
-
+       
         {/* Main Content */}
         <div className="w-full lg:w-4/5 container mx-auto px-4 py-10">
           {/* Header */}

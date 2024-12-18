@@ -12,7 +12,7 @@ const SettingLayout: React.FC = () => {
 
   return (
     <div>
-      {/* Pass isRegistered and onRegisterSuccess to SettingSection */}
+  
       <SettingSection 
         isRegistered={isRegistered} 
         onRegisterSuccess={handleRegisterSuccess} 
