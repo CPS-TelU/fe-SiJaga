@@ -37,11 +37,10 @@ const LoginPage: React.FC = () => {
         }
       );
       const { token } = response.data;
-      Cookies.set("token", token, { expires: 7 }); // Simpan token dalam cookie selama 7 hari
+      Cookies.set("token", token, { expires: 7 });
       console.log("Login success, token saved. Redirecting to Dashboard...");
       router.push("/dashboard");
     } catch (err) {
-      // Tangani error dan tampilkan pesan error
       if (axios.isAxiosError(err) && err.response) {
         const errorMessage =
           err.response.data.message || "Login failed. Please check your credentials.";
