@@ -5,7 +5,6 @@ import { jakarta } from "../../../styles/fonts";
 import Image from "next/image";
 import Sidebar from "../Sidebar";
 
-// Definisi tipe data untuk item history
 interface HistoryItem {
   id: number;
   Timestamp: string;
@@ -27,7 +26,7 @@ const History = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token"); // Ambil token dari localStorage
-      const apiUrl = "/user-ess/whoami"; // Endpoint untuk API whoami
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-ess/whoami`;
 
       if (!token) {
         console.error("Token tidak ditemukan.");

@@ -22,14 +22,26 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-  
     try {
-      const response = await axios.post("/api/login", { email, password });
-  
-      console.log("Login success, redirecting to Dashboard...");
+      const response = await axios.post(
+        LOGIN_API_URL,
+        {
+          email, // Ganti dari username menjadi email
+          password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { token } = response.data;
+      Cookies.set("token", token, { expires: 7 }); // Simpan token dalam cookie selama 7 hari
+      console.log("Login success, token saved. Redirecting to Dashboard...");
       router.push("/dashboard");
     } catch (err) {
-      // Tangani error
+      // Tangani error dan tampilkan pesan error
       if (axios.isAxiosError(err) && err.response) {
         const errorMessage =
           err.response.data.message || "Login failed. Please check your credentials.";
@@ -40,7 +52,7 @@ const LoginPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   return (
     <div className={`${jakarta.className} min-h-screen flex items-center justify-center`}>
