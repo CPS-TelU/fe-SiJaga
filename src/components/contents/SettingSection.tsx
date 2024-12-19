@@ -11,62 +11,112 @@ interface SettingSectionProps {
 
 const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegisterSuccess }) => {
   const [zoomOut, setZoomOut] = useState(false);
-  const [currentImage, setCurrentImage] = useState(isRegistered ? "/scanimage-success.png" : "/scanimage.png");
-  const [uid, setUid] = useState('');
+  const [currentImage, setCurrentImage] = useState<string>(
+    isRegistered ? '/scanimage-success.png' : '/scanimage.png'
+  );
+  
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [confirm, setConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cardId, setCardId] = useState<string | null>(null); // State untuk menyimpan card ID
-
+  const [cardId, setCardId] = useState<string | null>(null);
 
   const handleRegisterSuccess = () => {
-    setCurrentImage("/scanimage-success.png");
+    setCurrentImage('/scanimage-success.png');
     setZoomOut(true);
     setTimeout(() => {
       setZoomOut(false);
     }, 5000);
-    onRegisterSuccess(); // Panggil fungsi dari parent
+    onRegisterSuccess();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!confirm) {
-      setError('Harap konfirmasi untuk melanjutkan.');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      // Kirim data formulir ke endpoint API
-      const response = await axios.post(process.env.NEXT_PUBLIC_USER_REGISTER_URL!, {
-        uid,
-        name,
-        email,
-      });
-      
-      // Jika berhasil, tampilkan gambar sukses dan panggil fungsi dari parent
-      handleRegisterSuccess();
-    } catch (error: any) {
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // Validasi awal
+  if (!confirm) {
+    setError('Harap konfirmasi untuk melanjutkan.');
+    return;
+  }
+
+  if (!cardId) {
+    console.log('Card ID kosong:', cardId);
+    setError('Card ID tidak ditemukan. Harap coba lagi.');
+    return;
+  }
+
+  if (!name || !email) {
+    console.log('Data tidak lengkap:', { name, email });
+    setError('Nama dan Email harus diisi.');
+    return;
+  }
+
+  setLoading(true);
+  setError(null); // Reset error sebelum submit
+
+  try {
+    // Data yang akan dikirim ke API
+    const data = {
+      name,
+      email,
+      card_id: cardId,
+    };
+
+    // Panggilan POST ke endpoint registrasi
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_USER_REGISTER_URL!,
+      data
+    );
+
+    console.log('Response:', response.data); // Debug respons server
+
+    // Jika sukses, panggil handleRegisterSuccess
+    handleRegisterSuccess();
+  } catch (error: any) {
+    console.error('Error Detail:', error);
+
+    if (error.response) {
+      // Menampilkan pesan error dari server jika ada
+      console.log('Response Error:', error.response.data);
       setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
-    } finally {
-      setLoading(false);
+    } else {
+      setError('Terjadi kesalahan, tidak dapat terhubung ke server.');
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
+  
   useEffect(() => {
     const fetchCardId = async () => {
       try {
+        setLoading(true);
+        setError(null);
+  
         const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
-        setCardId(response.data.cardId); // Simpan hasil fetch ke state
-      } catch (error) {
-        console.error('Error fetching card ID:', error);
+        console.log('API Response untuk Card ID:', response?.data);
+  
+        const cardIdFromApi = response?.data?.data?.card_id;
+  
+        if (cardIdFromApi) {
+          setCardId(cardIdFromApi); // Simpan card_id ke dalam state
+          
+        } else {
+          setError('Card ID tidak ditemukan dalam respons API.');
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Gagal mengambil Card ID');
+      } finally {
+        setLoading(false);
       }
     };
   
     fetchCardId();
   }, []);
-
+  
   return (
     <div className="flex flex-col lg:flex-row w-full space-y-6 lg:space-y-0 lg:space-x-6">
       {/* Bagian Kiri */}
@@ -83,11 +133,8 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
             SiJaga
           </h1>
 
-          <h2 className="text-3xl font-semibold mb-8 opacity-80">
-            Tambahkan Kartu Baru
-          </h2>
+          <h2 className="text-3xl font-semibold mb-8 opacity-80">Tambahkan Kartu Baru</h2>
 
-          {/* Gambar dengan animasi zoom otomatis */}
           <div className={`w-70 h-70 mb-10 mt-4 ${zoomOut ? 'animate-zoom' : ''}`}>
             <img
               src={currentImage}
@@ -101,12 +148,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           </p>
         </div>
       </div>
-        {/* Card ID Terbaru */}
-        <div>
-          <h3 className="text-lg font-semibold mt-4">Card ID Terbaru:</h3>
-          <p className="text-gray-800">{cardId || 'Memuat...'}</p>
-        </div>
-      
 
       {/* Bagian Kanan */}
       <div className="w-full lg:w-1/2">
@@ -119,15 +160,22 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           </p>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">UID</label>
-              <input
-                type="text"
-                value={uid}
-                onChange={(e) => setUid(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+          <div>
+  <label htmlFor="uid" className="block text-sm font-medium text-gray-700">
+    UID
+  </label>
+  <input
+    id="uid"
+    type="text"
+    value={loading ? 'Memuat Card ID...' : cardId || 'Card ID tidak tersedia'}
+    readOnly
+    className={`w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-100 ${
+      loading ? 'text-gray-400 italic' : 'text-gray-700'
+    }`}
+  />
+</div>
+
+
             <div>
               <label className="block text-sm font-medium text-gray-700">Nama</label>
               <input
