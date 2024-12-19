@@ -44,7 +44,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         email,
       });
       
-      // Jika berhasil, tampilkan gambar sukses dan panggil fungsi dari parent
       handleRegisterSuccess();
     } catch (error: any) {
       setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
