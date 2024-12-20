@@ -2,31 +2,42 @@
 
 import Link from "next/link";
 import React from "react";
-import { useRouter } from "next/navigation"; // Ganti dengan `next/navigation`
+import { useRouter } from "next/navigation";
 import { FiHome, FiSettings, FiClock } from "react-icons/fi";
+import Cookies from "js-cookie";
 
 const Sidebar: React.FC = () => {
-  const router = useRouter(); // `useRouter` dari `next/navigation`
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_USER_LOGOUT_URL}`, {
+      const token = Cookies.get("token");
+  
+      if (!token) {
+        console.error("Token not found in cookies");
+        return;
+      }
+  
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
-
+  
       if (response.ok) {
-        localStorage.removeItem("token");
-        router.push("/login"); // Gunakan router.push hanya setelah validasi sukses
+        console.log("Logout successful");
+        Cookies.remove("token");
+        router.push("/");
       } else {
-        console.error("Failed to log out", await response.text());
+        const errorText = await response.text();
+        console.error("Failed to log out:", errorText);
       }
     } catch (error) {
-      console.error("Error during logout", error);
+      console.error("Error during logout:", error);
     }
-  };
+  };  
 
   return (
     <div className="bg-[#3650A2] text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl max-h-screen">
