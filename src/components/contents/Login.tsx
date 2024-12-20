@@ -59,7 +59,7 @@ const LoginPage: React.FC = () => {
         {/* Left Section */}
         <div className="md:col-span-8 flex flex-col items-start px-4 md:px-12">
           <Link href="/" className="mb-6 md:mb-8">
-            <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#3650A2] text-white font-bold rounded-full">
+            <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300">
               <Image
                 src="/icon-back.png"
                 alt="back"
