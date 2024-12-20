@@ -12,22 +12,30 @@ const Sidebar: React.FC = () => {
   // Fungsi logout dengan penghapusan token dan validasi respons server
   const handleLogout = async () => {
     try {
-      // Hapus token dari localStorage sebelum melakukan permintaan ke server
-      localStorage.removeItem("token");
-
+      const token = Cookies.get("token");
+  
+      if (!token) {
+        console.error("Token not found in cookies");
+        return;
+      }
+  
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
       const data = await response.text(); // Log respons server
 
       if (response.ok) {
-        router.push("/"); // Arahkan ke halaman login jika sukses
+        console.log("Logout successful");
+        Cookies.remove("token");
+        router.push("/");
       } else {
-        console.error("Failed to log out:", response.status, data);
+        const errorText = await response.text();
+        console.error("Failed to log out:", errorText);
       }
     } catch (error) {
       console.error("Error during logout:", error);
