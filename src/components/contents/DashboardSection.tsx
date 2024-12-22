@@ -1,9 +1,12 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
+
 import { jakarta } from "@/styles/fonts";
 
 const DashboardSection: React.FC = () => {
+  const [profileName, setProfileName] = useState<string>("JAMAL"); // Default value
   const [latestHistory, setLatestHistory] = useState<{
     id: number;
     Timestamp: string;
@@ -20,6 +23,50 @@ const DashboardSection: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+ 
+
+  useEffect(() => {
+      const fetchUserProfile = async () => {
+        const token = Cookies.get("token");
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-ess/whoami`;
+    
+        if (!token) {
+          setError("Autentikasi gagal. Harap login kembali.");
+          if (typeof window !== "undefined") {
+            router.push("/login");
+          }
+          return;
+        }
+    
+        try {
+          const response = await fetch(apiUrl, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error(
+              `Gagal mendapatkan profil: ${response.status} - ${response.statusText}`
+            );
+          }
+    
+          const data = await response.json();
+          if (data.success && data.user?.name) {
+            setProfileName(data.user.name);
+          } else {
+            throw new Error("Data pengguna tidak valid.");
+          }
+        } catch (error) {
+          setError("Gagal memuat profil pengguna.");
+        }
+      };
+    
+      fetchUserProfile();
+    }, []);
+    
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +114,7 @@ const DashboardSection: React.FC = () => {
         </h1>
         <div className="flex items-center space-x-2">
           <span className="text-white bg-[#3650A2] rounded-full px-4 py-1 font-bold tracking-widest">
-            JAMAL
+            {profileName} {/* Nama Profil */}
           </span>
           <div className="w-8 h-8 rounded-full flex items-center justify-center">
             <Image
@@ -136,70 +183,57 @@ const DashboardSection: React.FC = () => {
               <div className="grid grid-cols-2 gap-6">
                 {/* Card Status */}
                 {latestHistory && (
-  <div className="bg-white text-gray-800 rounded-3xl p-4 shadow-lg flex items-center space-x-4 w-full">
-    {/* Gambar di kiri */}
-    <div className="w-16 h-16 flex-shrink-0">
-    <Image
-  src="/status-icon.png"
-  alt="Status Icon"
-  width={64}
-  height={64}
-  layout="intrinsic"
-/>
-
-    </div>
-
-    {/* Teks status */}
-    <div>
-      {/* Teks tambahan */}
-      <p className="text-sm text-gray-500">
-        Status Barang
-      </p>
-      {/* Status */}
-      <p
-        className={`text-lg font-semibold ${
-          latestHistory.status === "active" ? "text-green-500" : "text-red-500"
-        }`}
-      >
-        {latestHistory.status}
-      </p>
-    </div>
-  </div>
-)}
-
+                  <div className="bg-white text-gray-800 rounded-3xl p-4 shadow-lg flex items-center space-x-4 w-full">
+                    <div className="w-16 h-16 flex-shrink-0">
+                      <Image
+                        src="/status-icon.png"
+                        alt="Status Icon"
+                        width={64}
+                        height={64}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Status Barang</p>
+                      <p
+                        className={`text-lg font-semibold ${
+                          latestHistory.status === "active"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {latestHistory.status}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Card Box Status */}
                 {latestBoxStatus && (
-  <div className="bg-white text-gray-800 rounded-3xl p-6 shadow-lg flex items-center space-x-4">
-    {/* Gambar di kiri */}
-    <div className="w-16 h-16 flex-shrink-0">
-      <Image
-        src="/box-icon.png" // Ganti dengan path gambar Anda
-        alt="Box Status Icon"
-        width={48}
-        height={48}
-        className="w-full h-full object-contain"
-      />
-    </div>
-
-    {/* Teks kondisi */}
-    <div>
-      <h2 className="text-xl font-bold mb-2">Kondisi siJaga</h2>
-      <p className="text-lg font-semibold">
-        <span
-          className={`${
-            latestBoxStatus.status === "Access Denied"
-              ? "text-red-500"
-              : "text-green-500"
-          }`}
-        >
-          {latestBoxStatus.status.toUpperCase()}
-        </span>
-      </p>
-    </div>
-  </div>
-)}
-
+                  <div className="bg-white text-gray-800 rounded-3xl p-6 shadow-lg flex items-center space-x-4">
+                    <div className="w-16 h-16 flex-shrink-0">
+                      <Image
+                        src="/box-icon.png"
+                        alt="Box Status Icon"
+                        width={48}
+                        height={48}
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold mb-2">Kondisi siJaga</h2>
+                      <p className="text-lg font-semibold">
+                        <span
+                          className={`${
+                            latestBoxStatus.status === "Access Denied"
+                              ? "text-red-500"
+                              : "text-green-500"
+                          }`}
+                        >
+                          {latestBoxStatus.status.toUpperCase()}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
