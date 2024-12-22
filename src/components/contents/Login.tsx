@@ -8,7 +8,7 @@ import Cookies from "js-cookie"; // Import js-cookie
 import axios from "axios";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // Ubah state dari username ke email
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
       const response = await axios.post(
         LOGIN_API_URL,
         {
-          username,
+          email, 
           password,
         },
         {
@@ -37,13 +37,13 @@ const LoginPage: React.FC = () => {
         }
       );
       const { token } = response.data;
-      Cookies.set("token", token, { expires: 7 }); // Simpan token dalam cookie selama 7 hari
-      console.log("Login success, token saved. Redirecting to LMS...");
-      router.push("/lms"); // Redirect ke dashboard LMS
+      Cookies.set("token", token, { expires: 7 });
+      console.log("Login success, token saved. Redirecting to Dashboard...");
+      router.push("/dashboard");
     } catch (err) {
-      // Tangani error dan tampilkan pesan error
       if (axios.isAxiosError(err) && err.response) {
-        const errorMessage = err.response.data.message || "Login failed. Please check your credentials.";
+        const errorMessage =
+          err.response.data.message || "Login failed. Please check your credentials.";
         setError(errorMessage);
       } else {
         setError("An unknown error occurred. Please try again later.");
@@ -113,17 +113,17 @@ const LoginPage: React.FC = () => {
             <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
-                  htmlFor="username"
+                  htmlFor="email"
                   className="block text-sm font-medium text-white"
                 >
-                  Nama Pengguna
+                  Email
                 </label>
                 <input
-                  id="username"
-                  type="text"
-                  placeholder="Nama Pengguna"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="mt-1 block w-full px-4 py-2 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
