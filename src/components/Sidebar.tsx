@@ -37,26 +37,26 @@ const Sidebar: React.FC = () => {
     } catch (error) {
       console.error("Error during logout:", error);
     }
-  };  
+  };
 
   return (
-    <div className="bg-[#3650A2] text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl max-h-screen">
-      <nav className="space-y-6">
+    <div className="bg-[#3650A2] text-white w-20 md:w-16 lg:w-20 xl:w-24 flex flex-col justify-between items-center p-6 ml-6 mt-6 rounded-3xl max-h-screen">
+      <nav className="space-y-6 w-full">
         <Link href="/dashboard" className="group flex flex-col items-center text-sm p-3 rounded-lg">
           <FiHome size={24} className="transition duration-300 transform group-hover:scale-125" />
-          <span className="mt-1 hidden md:block text-xs font-semibold">Beranda</span>
+          <span className="mt-1 hidden md:block text-xs sm:text-xs lg:text-xs font-semibold">Beranda</span>
         </Link>
         <Link href="/riwayat" className="group flex flex-col items-center text-sm p-3 rounded-lg">
           <FiClock size={24}  className="transition duration-300 transform group-hover:scale-125" />
-          <span className="mt-1 hidden md:block text-xs font-semibold">Riwayat</span>
+          <span className="mt-1 hidden md:block text-xs sm:text-xs lg:text-xs font-semibold">Riwayat</span>
         </Link>
         <Link href="/setting" className="group flex flex-col items-center text-sm p-3 rounded-lg">
           <FiSettings size={24} className="transition duration-300 transform group-hover:scale-125" />
-          <span className="mt-1 hidden md:block text-xs font-semibold">Pengaturan</span>
+          <span className="mt-1 hidden md:block text-xs sm:text-xs lg:text-xs font-semibold">Pengaturan</span>
         </Link>
       </nav>
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center w-full">
         <div className="w-full h-[1px] bg-white mb-1"></div>
         <button onClick={handleLogout} className="group mt-4 mb-2 p-1 rounded-lg">
           <img src="/logout.png" alt="Logout" className="w-4 h-6 md:w-8 md:h-6 transition duration-300 transform group-hover:scale-125" />
