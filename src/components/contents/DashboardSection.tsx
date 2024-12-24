@@ -106,25 +106,27 @@ const DashboardSection: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8">
         {/* Logo dan Dashboard */}
         <div className="flex items-center">
-          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 w-6 h-6" />
+          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
           <h1 className="text-lg sm:text-xl font-bold text-blue">Dashboard</h1>
         </div>
 
-        {/* Profil */}
-        <div className="flex items-center space-x-2 mt-4 sm:mt-0 sm:ml-auto ml-12">
-          <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
-            {profileName}
-          </span>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
-            <Image
-              src="/human.png"
-              alt="User Icon"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-          </div>
-        </div>
+      {/* Profil */}
+<div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
+  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+    {profileName}
+  </span>
+  <div className="w-8 h-8 rounded-full flex items-center justify-center">
+    <Image
+      src="/human.png"
+      alt="User Icon"
+      width={32}
+      height={32}
+      className="rounded-full"
+    />
+  </div>
+</div>
+
+
       </div>
 
       {/* Main Content */}
@@ -223,7 +225,7 @@ const DashboardSection: React.FC = () => {
                       </h2>
                       <p className="text-sm sm:text-lg font-semibold">
                         <span
-                          className={`${
+                          className={`$${
                             latestBoxStatus.status === "Access Denied"
                               ? "text-red-500"
                               : "text-green-500"

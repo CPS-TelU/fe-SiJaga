@@ -116,25 +116,25 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     fetchCardId();
   }, []);
 
-  return (
-    <div className="flex flex-col lg:flex-row w-full space-y-6 lg:space-y-0 lg:space-x-6">
-      {/* Bagian Kiri */}
+ return (
+    <div className="flex flex-col lg:flex-row w-full space-y-4 lg:space-y-6 lg:space-x-3 lg:mt-10">
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
-        <div className="text-[#3650A2] flex flex-col items-center transform -translate-y-[-90px]">
-          <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 transform -translate-x-60">
-            <Image
-              src="/logo.png"
-              alt="Dashboard Icon"
-              className="mr-2 transform -translate-y-1"
-              width={24}
-              height={24}
-            />
-            SiJaga
-          </h1>
+        <div className="text-[#3650A2] flex flex-col items-center">
+        <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
+  <Image
+    src="/logo.png"
+    alt="Dashboard Icon"
+    className="mr-2 mb-2"
+    width={24}
+    height={24}
+  />
+  SiJaga
+</h1>
 
-          <h2 className="text-3xl font-semibold mb-8 opacity-80">Tambahkan Kartu Baru</h2>
 
-          <div className={`w-70 h-70 mb-10 mt-4 ${zoomOut ? 'animate-zoom' : ''}`}>
+          <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
+
+          <div className={`w-70 h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
             <img
               src={currentImage}
               alt="Scan Icon"
@@ -142,15 +142,14 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
             />
           </div>
 
-          <p className="text-center text-black mt-4">
+          <p className="text-center text-black mt-4 lg:translate-y-[80px]">
             Pindai kartu akses yang ingin didaftarkan pada box SiJaga
           </p>
         </div>
       </div>
 
-      {/* Bagian Kanan */}
       <div className="w-full lg:w-1/2">
-        <div className="bg-white p-6 rounded-lg shadow-md mt-40 mr-20 ml-20">
+        <div className="bg-white p-6 rounded-lg shadow-md lg:mt-20 lg:mr-20 lg:ml-20 lg:mb-20">
           <h3 className="text-xl font-semibold mb-2 text-gray-800">
             Tambahkan Kredensial Kartu Baru
           </h3>
@@ -227,3 +226,4 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 };
 
 export default SettingSection;
+
