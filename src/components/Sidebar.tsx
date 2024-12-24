@@ -10,16 +10,16 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Fungsi logout dengan penghapusan token dan validasi respons server
+  // Fungsi logout dengan perbaikan handling token dan respons
   const handleLogout = async () => {
     try {
       const token = Cookies.get("token");
-  
+
       if (!token) {
         console.error("Token not found in cookies");
         return;
       }
-  
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/logout`, {
         method: "POST",
         headers: {
@@ -28,12 +28,11 @@ const Sidebar: React.FC = () => {
         },
       });
 
-      const data = await response.text(); // Log respons server
-
+      // Pastikan hanya membaca body respons sekali
       if (response.ok) {
         console.log("Logout successful");
-        Cookies.remove("token");
-        router.push("/");
+        Cookies.remove("token"); // Hapus token dari cookies
+        router.push("/"); // Arahkan ke halaman login
       } else {
         const errorText = await response.text();
         console.error("Failed to log out:", errorText);
