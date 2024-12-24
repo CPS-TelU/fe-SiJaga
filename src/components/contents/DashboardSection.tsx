@@ -100,7 +100,7 @@ const DashboardSection: React.FC = () => {
 
   return (
     <div
-      className={`${jakarta.className} py-6 px-4 sm:py-8 sm:px-6 lg:py-12 lg:px-8 bg-cover bg-center min-h-screen`}
+    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-32 lg:-translate-y-12 lg:px-8 bg-cover bg-center`}
     >
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8">
@@ -224,16 +224,19 @@ const DashboardSection: React.FC = () => {
                         Kondisi siJaga
                       </h2>
                       <p className="text-sm sm:text-lg font-semibold">
-                        <span
-                          className={`$${
-                            latestBoxStatus.status === "Access Denied"
-                              ? "text-red-500"
-                              : "text-green-500"
-                          }`}
-                        >
-                          {latestBoxStatus.status.toUpperCase()}
-                        </span>
-                      </p>
+  <span
+    className={`${
+      latestBoxStatus.status === "Access Denied"
+        ? "text-red-500"
+        : latestBoxStatus.status.toLowerCase() === "buka"
+        ? "text-green-500"
+        : "text-gray-500"
+    }`}
+  >
+    {latestBoxStatus.status.toUpperCase()}
+  </span>
+</p>
+
                     </div>
                   </div>
                 )}
