@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { jakarta } from "../../../styles/fonts";
 import Image from "next/image";
 import Cookies from "js-cookie";
+import { io, Socket } from "socket.io-client";
 
 interface HistoryItem {
   id: number;
@@ -28,6 +29,8 @@ const History = () => {
   const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
   const [isConditionDropdownOpen, setIsConditionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
 
   // Fetch user profile
   useEffect(() => {
@@ -113,6 +116,21 @@ const History = () => {
 
     fetchHistory();
   }, [router]);
+
+  useEffect(() => {
+    const socket = io(URL, {
+      transports: ["pooling"],
+      withCredentials: true,
+    });
+    socketRef.current = socket;
+    socket.on("connect", () => {
+      console.log("Connected to the server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);

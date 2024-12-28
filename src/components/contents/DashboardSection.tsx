@@ -1,10 +1,18 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { jakarta } from "@/styles/fonts";
+import { io, Socket } from "socket.io-client";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const HISTORY_LATEST_URL = `${API_BASE_URL}/history/latest`;
+const HISTORY_LATEST_BOX_STATUS_URL = `${API_BASE_URL}/history/latest-box-status`;
+const USER_PROFILE_URL = `${API_BASE_URL}/user-ess/whoami`;
+
 
 const DashboardSection: React.FC = () => {
+  const socketRef = useRef<Socket | null>(null);
   const [profileName, setProfileName] = useState<string>("Profile");
   const [latestHistory, setLatestHistory] = useState<{
     id: number;
@@ -23,11 +31,38 @@ const DashboardSection: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const socketHistory = io(HISTORY_LATEST_URL, {
+      transports: ["polling"],
+      withCredentials: true,
+    });
+  
+    const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL, {
+      transports: ["polling"],
+      withCredentials: true,
+    });
+  
+    socketRef.current = socketHistory;
+  
+    socketHistory.on("connect", () => {
+      console.log("Connected to HISTORY_LATEST_URL");
+    });
+  
+    socketBoxStatus.on("connect", () => {
+      console.log("Connected to HISTORY_LATEST_BOX_STATUS_URL");
+    });
+  
+    return () => {
+      socketHistory.disconnect();
+      socketBoxStatus.disconnect();
+    };
+  }, []);
+  
+
   // Fetch User Profile
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = Cookies.get("token");
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-ess/whoami`;
 
       if (!token) {
         setError("Autentikasi gagal. Harap login kembali.");
@@ -35,7 +70,7 @@ const DashboardSection: React.FC = () => {
       }
 
       try {
-        const response = await fetch(apiUrl, {
+        const response = await fetch(USER_PROFILE_URL, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -70,9 +105,7 @@ const DashboardSection: React.FC = () => {
         setIsLoading(true);
 
         // Fetch latest history
-        const historyResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_HISTORY_LATEST_URL}`
-        );
+        const historyResponse = await fetch(HISTORY_LATEST_URL);
         if (!historyResponse.ok) {
           throw new Error("Failed to fetch latest history");
         }
@@ -80,9 +113,7 @@ const DashboardSection: React.FC = () => {
         setLatestHistory(historyData.latestUsageHistory);
 
         // Fetch latest box status
-        const boxStatusResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_HISTORY_LATEST_BOX_STATUS_URL}`
-        );
+        const boxStatusResponse = await fetch(HISTORY_LATEST_BOX_STATUS_URL);
         if (!boxStatusResponse.ok) {
           throw new Error("Failed to fetch latest box status");
         }
@@ -111,22 +142,20 @@ const DashboardSection: React.FC = () => {
         </div>
 
       {/* Profil */}
-<div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
-  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
-    {profileName}
-  </span>
-  <div className="w-8 h-8 rounded-full flex items-center justify-center">
-    <Image
-      src="/human.png"
-      alt="User Icon"
-      width={32}
-      height={32}
-      className="rounded-full"
-    />
-  </div>
-</div>
-
-
+      <div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
+        <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+          {profileName}
+        </span>
+        <div className="w-8 h-8 rounded-full flex items-center justify-center">
+          <Image
+            src="/human.png"
+            alt="User Icon"
+            width={32}
+            height={32}
+            className="rounded-full"
+          />
+        </div>
+      </div>
       </div>
 
       {/* Main Content */}

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -8,6 +8,10 @@ interface SettingSectionProps {
   isRegistered: boolean;
   onRegisterSuccess: () => void;
 }
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const CARD_API_URL = `${API_BASE_URL}/card-id/latest`;
+const REGISTER_API_URL = `${API_BASE_URL}/user/register`;
 
 const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegisterSuccess }) => {
   const [zoomOut, setZoomOut] = useState(false);
@@ -35,7 +39,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validasi awal
     if (!confirm) {
       setError('Harap konfirmasi untuk melanjutkan.');
       return;
@@ -54,32 +57,25 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     }
 
     setLoading(true);
-    setError(null); // Reset error sebelum submit
+    setError(null);
 
     try {
-      // Data yang akan dikirim ke API
       const data = {
         name,
         email,
         card_id: cardId,
-        password, // Tambahkan password
+        password,
       };
 
-      // Panggilan POST ke endpoint registrasi
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_USER_REGISTER_URL!,
-        data
-      );
+      const response = await axios.post(REGISTER_API_URL, data);
 
-      console.log('Response:', response.data); // Debug respons server
+      console.log('Response:', response.data);
 
-      // Jika sukses, panggil handleRegisterSuccess
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
 
       if (error.response) {
-        // Menampilkan pesan error dari server jika ada
         console.log('Response Error:', error.response.data);
         setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
       } else {
@@ -96,13 +92,13 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         setLoading(true);
         setError(null);
 
-        const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
+        const response = await axios.get(CARD_API_URL);
         console.log('API Response untuk Card ID:', response?.data);
 
         const cardIdFromApi = response?.data?.data?.card_id;
 
         if (cardIdFromApi) {
-          setCardId(cardIdFromApi); // Simpan card_id ke dalam state
+          setCardId(cardIdFromApi);
         } else {
           setError('Card ID tidak ditemukan dalam respons API.');
         }
@@ -121,16 +117,15 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
         <div className="text-[#3650A2] flex flex-col items-center">
         <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
-  <Image
-    src="/logo.png"
-    alt="Dashboard Icon"
-    className="mr-2 mb-2"
-    width={24}
-    height={24}
-  />
-  SiJaga
-</h1>
-
+          <Image
+            src="/logo.png"
+            alt="Dashboard Icon"
+            className="mr-2 mb-2"
+            width={24}
+            height={24}
+          />
+          SiJaga
+        </h1>
 
           <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
 
