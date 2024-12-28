@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,6 +8,7 @@ import Cookies from "js-cookie";
 
 const DashboardSection = () => {
   const [lastUser, setLastUser] = useState({
+    id: null,
     name: "Memuat...",
     timestamp: "",
     status: "",
@@ -15,7 +17,7 @@ const DashboardSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [profileName, setProfileName] = useState(""); // Default name
-
+  const [availableStatus, setAvailableStatus] = useState("");
 
   const fetchUserProfile = async () => {
     const token = Cookies.get("token");
@@ -54,7 +56,6 @@ const DashboardSection = () => {
     }
   };
 
-  // Fungsi fetchLastUser
   const fetchLastUser = async () => {
     setLoading(true);
     setError("");
@@ -87,6 +88,7 @@ const DashboardSection = () => {
         const { name, Timestamp, status, card_id } =
           responseData.latestUsageHistory;
         setLastUser({
+          id: null, // Tetapkan nilai default
           name,
           timestamp: Timestamp,
           status,
@@ -103,11 +105,56 @@ const DashboardSection = () => {
     }
   };
 
- 
-  useEffect(() => {
-    fetchUserProfile();
-    fetchLastUser();
-  }, []);
+  const fetchAvailable = async () => {
+    setLoading(true);
+    setError("");
+    const token = Cookies.get("token");
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/availability/get-latest`;
+  
+    if (!token) {
+      setError("Token tidak ditemukan. Silakan login kembali.");
+      setLoading(false);
+      return;
+    }
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(
+          `Gagal mengambil data: ${response.status} - ${response.statusText}`
+        );
+      }
+  
+      const responseData = await response.json();
+      if (responseData.status && responseData.data) {
+        const { status } = responseData.data;
+  
+        // Simpan data ke dalam state
+        setAvailableStatus(status);
+        
+      } else {
+        throw new Error("Data yang diterima tidak valid.");
+      }
+    } catch (error) {
+      console.error("Error fetching availability data:", error);
+      setError("Gagal memuat data ketersediaan terbaru.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ useEffect(() => {
+  fetchUserProfile();
+  fetchLastUser();
+  fetchAvailable();
+}, []);
 
   return (
     <div className={` ${jakarta.className} py-12 px-6  min-y-screen `}>
@@ -135,7 +182,7 @@ const DashboardSection = () => {
 
       {/* Main Content */}
       <div className="lg:mt-24">
-        <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#385CBD] to-[#3650A2] rounded-3xl p-6 shadow-lg pb-8 items-center ">
+        <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#385CBD] to-[#3650A2] rounded-3xl p-6 shadow-lg pb-8 items-center">
           {/* Section Header */}
           <h1 className="text-white text-3xl font-bold mb-4">Terkini</h1>
 
@@ -143,7 +190,7 @@ const DashboardSection = () => {
           <div className="grid grid-rows-2 gap-6">
             {/* Card 1: Pengguna Terakhir */}
             <div className="bg-white text-gray-800 rounded-3xl p-6 shadow-lg flex items-center grid grid-cols-2 gap-6">
-              <div className="flex items-center space-x-4  ">
+              <div className="flex items-center space-x-4">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center">
                   <Image
                     src="/human.png"
@@ -195,7 +242,9 @@ const DashboardSection = () => {
                   <h2 className="text-gray-300 font-medium text-lg">
                     Status Barang
                   </h2>
-                  <p className="text-[#02BA80] text-2xl font-bold">ADA BARANG</p>
+                  <p className="text-[#02BA80] text-2xl font-bold">
+                    {loading ? "Memuat..." : (availableStatus).toUpperCase() || "Tidak ditemukan"}
+                  </p>
                 </div>
               </div>
 
