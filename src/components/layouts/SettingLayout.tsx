@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import SettingSection from '../contents/SettingSection';  // Sesuaikan dengan path yang benar
+import SettingSection from '../contents/SettingSection'; 
+import Sidebar from '../Sidebar'; // Sesuaikan dengan path yang benar
 
 const SettingLayout: React.FC = () => {
   const [isRegistered, setIsRegistered] = useState(false); // Atur state isRegistered sesuai kebutuhan
@@ -11,12 +12,14 @@ const SettingLayout: React.FC = () => {
   };
 
   return (
-    <div>
-      {/* Pass isRegistered and onRegisterSuccess to SettingSection */}
+    <div className="flex bg-[url('/bg-string2.png')]  bg-cover bg-center">
+      <Sidebar  />
+      <main>
       <SettingSection 
         isRegistered={isRegistered} 
         onRegisterSuccess={handleRegisterSuccess} 
       />
+      </main>
     </div>
   );
 };

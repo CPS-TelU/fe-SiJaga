@@ -44,7 +44,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         email,
       });
       
-      // Jika berhasil, tampilkan gambar sukses dan panggil fungsi dari parent
       handleRegisterSuccess();
     } catch (error: any) {
       setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
@@ -54,7 +53,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full space-y-6 lg:space-y-0 lg:space-x-6">
+    <div className="flex flex-col lg:flex-row w-full space-y-6 lg:space-y-0 lg:space-x-6 min-y-screen pl-12">
       {/* Bagian Kiri */}
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
         <div className="text-[#3650A2] flex flex-col items-center transform -translate-y-[-90px]">
