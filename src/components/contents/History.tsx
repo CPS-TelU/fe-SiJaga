@@ -73,6 +73,7 @@ const History = () => {
 
   // Fetch history data
   useEffect(() => {
+
     const fetchHistory = async () => {
       setLoading(true);
       setError("");
@@ -284,7 +285,6 @@ const History = () => {
               </div>
             </div>
 
-            {/* Table */}
             {error ? (
               <p className="text-center text-red-500">{error}</p>
             ) : loading ? (
