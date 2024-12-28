@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { usePathname, useRouter, } from "next/navigation";
 import { FiHome, FiEdit, FiClock, FiLogOut } from "react-icons/fi";
 import Cookies from "js-cookie";
 

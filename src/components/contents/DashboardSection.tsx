@@ -12,6 +12,7 @@ const USER_PROFILE_URL = `${API_BASE_URL}/user-ess/whoami`;
 
 
 const DashboardSection = () => {
+  const socketRef = useRef<Socket | null>(null);
   const [lastUser, setLastUser] = useState({
     id: null,
     name: "Memuat...",
@@ -60,6 +61,33 @@ const DashboardSection = () => {
       setError("Gagal memuat profil pengguna.");
     }
   };
+
+  useEffect(() => {
+    const socketHistory = io(HISTORY_LATEST_URL, {
+      transports: ["polling"],
+      withCredentials: true,
+    });
+  
+    const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL, {
+      transports: ["polling"],
+      withCredentials: true,
+    });
+  
+    socketRef.current = socketHistory;
+  
+    socketHistory.on("connect", () => {
+      console.log("Connected to HISTORY_LATEST_URL");
+    });
+  
+    socketBoxStatus.on("connect", () => {
+      console.log("Connected to HISTORY_LATEST_BOX_STATUS_URL");
+    });
+  
+    return () => {
+      socketHistory.disconnect();
+      socketBoxStatus.disconnect();
+    };
+  }, []);
 
   const fetchLastUser = async () => {
     setLoading(true);
