@@ -17,8 +17,8 @@ export function middleware(req: NextRequest) {
 // Tentukan rute mana saja yang dilindungi middleware ini
 export const config = {
   matcher: [
-    '/dashboard/child',
-    '/riwayat/child',
-    '/setting/child',
+    "/dashboard",
+    "/riwayat",
+    "/setting",
   ],
 };
