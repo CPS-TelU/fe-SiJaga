@@ -9,7 +9,9 @@ import Cookies from "js-cookie";
 const Sidebar: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
+  // Fungsi logout dengan perbaikan handling token dan respons
   const handleLogout = async () => {
     try {
       const token = Cookies.get("token");
@@ -31,8 +33,8 @@ const Sidebar: React.FC = () => {
 
       if (response.ok) {
         console.log("Logout successful");
-        Cookies.remove("token");
-        router.push("/");
+        Cookies.remove("token"); // Hapus token dari cookies
+        router.push("/"); // Arahkan ke halaman login
       } else {
         const errorText = await response.text();
         console.error("Failed to log out:", errorText);

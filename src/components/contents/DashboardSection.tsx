@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { jakarta } from "@/styles/fonts";
+import Cookies from "js-cookie";
 
 const DashboardSection: React.FC = () => {
   const [profileName, setProfileName] = useState<string>("Profile");

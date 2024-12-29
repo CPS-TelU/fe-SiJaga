@@ -1,6 +1,7 @@
 import { jakarta } from "../../../styles/fonts";
 import Image from "next/image";
 import ShiningButton from "../ui/button";
+import Link from "next/link";
 
 const Home = () => {
   return (
@@ -26,9 +27,11 @@ const Home = () => {
             trendi untuk menyediakan fitur keamanan yang komprehensif, memastikan bahwa
             isinya tetap terlindungi dari akses yang tidak sah, pencurian, dan perusakan.
           </p>
+          <Link href={"/login"}>
           <div className="mt-6 md:mt-8">
             <ShiningButton />
           </div>
+          </Link>
         </div>
 
         <div className="flex justify-center lg:justify-end  md:pr-6 lg:pr-2 mb-8 ">
