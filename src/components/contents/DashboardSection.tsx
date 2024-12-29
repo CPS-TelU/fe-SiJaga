@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+
 import { jakarta } from "@/styles/fonts";
 import Cookies from "js-cookie";
 
@@ -157,27 +158,34 @@ const DashboardSection = () => {
 }, []);
 
   return (
-    <div className={` ${jakarta.className} py-12 px-6  min-y-screen `}>
+    <div
+    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-32 lg:-translate-y-12 lg:px-8 bg-cover bg-center`}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold text-blue flex items-center">
-          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 w-6 h-6" />
-          Dashboard
-        </h1>
-        <div className="flex items-center space-x-2">
-          <span className="text-white bg-[#3650A2] rounded-full px-4 py-1 font-bold tracking-widest">
-            {profileName || "Memuat..."}
-          </span>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
-            <Image
-              src="/human.png"
-              alt="User Icon"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-          </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8">
+        {/* Logo dan Dashboard */}
+        <div className="flex items-center">
+          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
+          <h1 className="text-lg sm:text-xl font-bold text-blue">Dashboard</h1>
         </div>
+
+      {/* Profil */}
+<div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
+  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+    {profileName}
+  </span>
+  <div className="w-8 h-8 rounded-full flex items-center justify-center">
+    <Image
+      src="/human.png"
+      alt="User Icon"
+      width={32}
+      height={32}
+      className="rounded-full"
+    />
+  </div>
+</div>
+
+
       </div>
 
       {/* Main Content */}
