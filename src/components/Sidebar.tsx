@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { FiHome, FiEdit, FiClock, FiChevronRight, FiChevronLeft, FiLogOut } from "react-icons/fi";
+import { FiHome, FiEdit, FiClock, FiLogOut,  FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import Cookies from "js-cookie";
 
 const Sidebar: React.FC = () => {
@@ -15,7 +15,6 @@ const Sidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       const token = Cookies.get("token");
-
       if (!token) {
         console.error("Token not found in cookies");
         return;
@@ -47,38 +46,95 @@ const Sidebar: React.FC = () => {
   const isActive = (path: string) => pathname === path;
 
   return (
+    
     <>
-      {/* Overlay untuk layar kecil */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    {isSidebarOpen && (
+      <div
+        className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
+        onClick={() => setSidebarOpen(false)}
+      />
+    )}
 
-      {/* Sidebar untuk layar besar */}
-      <div className="hidden lg:flex bg-[#3650A2] text-white w-20 md:w-16 lg:w-20 xl:w-24 flex-col justify-between items-center p-6 ml-6 mt-6 rounded-3xl max-h-screen">
-        <nav className="space-y-6 w-full">
-          <Link href="/dashboard" className="group flex flex-col items-center text-sm p-3 rounded-lg">
-            <FiHome size={24} className="transition duration-300 transform group-hover:scale-125" />
-            <span className="mt-1 text-xs font-semibold">Beranda</span>
+    <div className="bg-[#3650A2] text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl max-h-screen">
+      <nav className="space-y-6">
+        <div className="flex flex-col items-center space-y-6 pt-6">
+          <Link
+            href="/dashboard"
+            className={`group flex flex-col items-center text-sm p-3 rounded-lg transition-all duration-300 hover:scale-105 ${
+              isActive("/dashboard") ? "text-[#FFE492]" : ""
+            }`}
+          >
+            <FiHome
+              size={28}
+              className={`transition-transform duration-300 transform group-hover:scale-110 ${
+                isActive("/dashboard") ? "text-[#FFE492]" : ""
+              }`}
+            />
+            <span
+              className={`mt-1 hidden md:block text-xs font-semibold ${
+                isActive("/dashboard") ? "text-[#FFE492]" : ""
+              }`}
+            >
+              Beranda
+            </span>
           </Link>
-          <Link href="/riwayat" className="group flex flex-col items-center text-sm p-3 rounded-lg">
-            <FiClock size={24} className="transition duration-300 transform group-hover:scale-125" />
-            <span className="mt-1 text-xs font-semibold">Riwayat</span>
+          <Link
+            href="/riwayat"
+            className={`group flex flex-col items-center text-sm p-3 rounded-lg transition-all duration-300 hover:scale-105 ${
+              isActive("/riwayat") ? "text-[#FFE492]" : ""
+            }`}
+          >
+            <FiClock
+              size={28}
+              className={`transition-transform duration-300 transform group-hover:scale-110 ${
+                isActive("/riwayat") ? "text-[#FFE492]" : ""
+              }`}
+            />
+            <span
+              className={`mt-1 hidden md:block text-xs font-semibold ${
+                isActive("/riwayat") ? "text-[#FFE492]" : ""
+              }`}
+            >
+              Riwayat
+            </span>
           </Link>
-          <Link href="/setting" className="group flex flex-col items-center text-sm p-3 rounded-lg">
-            <FiSettings size={24} className="transition duration-300 transform group-hover:scale-125" />
-            <span className="mt-1 text-xs font-semibold">Pengaturan</span>
+          <Link
+            href="/setting"
+            className={`group flex flex-col items-center text-sm p-3 rounded-lg transition-all duration-300 hover:scale-105 ${
+              isActive("/setting") ? "text-[#FFE492]" : ""
+            }`}
+          >
+            <FiEdit
+              size={28}
+              className={`transition-transform duration-300 transform group-hover:scale-110 ${
+                isActive("/setting") ? "text-[#FFE492]" : ""
+              }`}
+            />
+            <span
+              className={`mt-1 hidden md:block text-xs font-semibold ${
+                isActive("/setting") ? "text-[#FFE492]" : ""
+              }`}
+            >
+              Daftar
+            </span>
           </Link>
-        </nav>
-
-        <div className="flex flex-col items-center w-full">
-          <div className="w-full h-[1px] bg-white mb-1"></div>
-          <button onClick={handleLogout} className="group mt-4 mb-2 p-1 rounded-lg">
-            <img src="/logout.png" alt="Logout" className="w-6 h-6 transition duration-300 transform group-hover:scale-125" />
-          </button>
         </div>
+      </nav>
+
+      <div className="flex flex-col items-center">
+        <div className="w-full h-[1px] bg-white mb-1"></div>
+        <button
+          onClick={handleLogout}
+          className="mt-4 mb-2 group flex flex-col items-center text-sm rounded-lg transition-all duration-300 hover:scale-105"
+        >
+          <FiLogOut
+            size={28}
+            className="transition-transform duration-300 transform group-hover:scale-110"
+          />
+          <span className="mt-1 hidden md:block text-xs font-semibold">
+            Keluar
+          </span>
+        </button>
       </div>
 
       {/* Sidebar untuk layar kecil */}
@@ -98,7 +154,7 @@ const Sidebar: React.FC = () => {
             <span className="ml-4 text-sm font-semibold">Riwayat</span>
           </Link>
           <Link href="/setting" className="group flex items-center text-sm p-3 rounded-lg">
-            <FiSettings size={24} className="transition duration-300 transform group-hover:scale-125" />
+            <FiEdit size={24} className="transition duration-300 transform group-hover:scale-125" />
             <span className="ml-4 text-sm font-semibold">Pengaturan</span>
           </Link>
         </nav>
@@ -118,7 +174,9 @@ const Sidebar: React.FC = () => {
       >
         {isSidebarOpen ? <FiChevronLeft size={24} /> : <FiChevronRight size={24} />}
       </button>
-    </>
+    </div>
+    
+  </>
   );
 };
 
