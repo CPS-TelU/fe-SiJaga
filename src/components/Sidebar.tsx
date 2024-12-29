@@ -55,7 +55,7 @@ const Sidebar: React.FC = () => {
       />
     )}
 
-    <div className="bg-[#3650A2] text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl max-h-screen">
+    <div className="fixed hidden lg:flex bg-[#3650A2] text-white w-10 sm:w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl lg:min-h-[670px] z-50">
       <nav className="space-y-6">
         <div className="flex flex-col items-center space-y-6 pt-6">
           <Link

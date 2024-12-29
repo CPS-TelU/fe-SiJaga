@@ -165,8 +165,8 @@ const History = () => {
   };  
 
   return (
-    <div className={`${jakarta.className}`}>
-      <div className="min-h-screen flex">
+    <div className={`${jakarta.className} mx-auto items-center`}>
+      <div className="min-h-screen  flex">
         <div className="w-full lg:w-4/5 container mx-auto px-4 py-10">
           <div className="flex justify-between items-center mb-6">
             <div className="flex flex-col items-center gap-2">
