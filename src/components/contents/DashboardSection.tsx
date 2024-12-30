@@ -174,12 +174,12 @@ const DashboardSection = () => {
           <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
             {profileName || "Memuat..."}
           </span>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+          <div className=" rounded-full flex items-center justify-center">
             <Image
               src="/human.png"
               alt="User Icon"
-              width={32}
-              height={32}
+              width={40}
+              height={40}
               className="rounded-full"
             />
           </div>
