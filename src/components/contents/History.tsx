@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { jakarta } from "../../../styles/fonts";
 import Image from "next/image";
 import Cookies from "js-cookie";
+import { io, Socket } from "socket.io-client";
 
 interface HistoryItem {
   id: number;
@@ -28,6 +29,8 @@ const History = () => {
   const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
   const [isConditionDropdownOpen, setIsConditionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
 
   // Fetch user profile
   useEffect(() => {
@@ -114,6 +117,37 @@ const History = () => {
     fetchHistory();
   }, [router]);
 
+  useEffect(() => {
+    const socket = io(URL, {
+      transports: ["pooling"],
+      withCredentials: true,
+    });
+    socketRef.current = socket;
+    socket.on("connect", () => {
+      console.log("Connected to the server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Filter data saat pencarian diubah
+  useEffect(() => {
+    const socket = io(URL, {
+      transports: ["pooling"],
+      withCredentials: true,
+    });
+    socketRef.current = socket;
+    socket.on("connect", () => {
+      console.log("Connected to the server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   // Filter data saat pencarian diubah
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -199,6 +233,15 @@ const History = () => {
             <div className="flex items-center gap-3">
               <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
                 {profileName || "Memuat..."}
+              </div>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                <Image
+                    src="/human.png"
+                    alt="User Icon"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                />
               </div>
               <Image
                 src="/human.png"
