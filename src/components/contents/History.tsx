@@ -191,17 +191,19 @@ const History = () => {
               <Image src="/Logo sijaga.png" alt="Logo SiJaga" width={100} height={100} />
               <p className="text-2xl font-bold text-[#3650A2]">History</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="bg-[#608BC1] text-white font-semibold px-4 py-2 rounded-xl">
+            <div className="flex items-center space-x-2">
+              <span className="text-white bg-[#3650A2] rounded-full px-4 py-1 font-bold tracking-widest">
                 {profileName || "Memuat..."}
+              </span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                <Image
+                    src="/human.png"
+                    alt="User Icon"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                />
               </div>
-              <Image
-                src="/profile-icon.png"
-                alt="Profile Icon"
-                width={40}
-                height={40}
-                className="rounded-full border border-gray-300"
-              />
             </div>
           </div>
 
