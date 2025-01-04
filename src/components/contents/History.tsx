@@ -148,6 +148,37 @@ const History = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const socket = io(URL, {
+      transports: ["pooling"],
+      withCredentials: true,
+    });
+    socketRef.current = socket;
+    socket.on("connect", () => {
+      console.log("Connected to the server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Filter data saat pencarian diubah
+  useEffect(() => {
+    const socket = io(URL, {
+      transports: ["pooling"],
+      withCredentials: true,
+    });
+    socketRef.current = socket;
+    socket.on("connect", () => {
+      console.log("Connected to the server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   // Filter data saat pencarian diubah
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -225,13 +256,13 @@ const History = () => {
   return (
     <div className={`${jakarta.className} mx-auto items-center md:ml-28 lg:translate-y-8`}>
       <div className="max-h-screen flex">
-        <div className="w-full lg:w-4/5 container mx-auto px-4 py-10">
+        <div className="w-full lg:w-4/5 container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-6">
             <div className="flex flex-col items-center gap-2">
               <Image src="/Logo sijaga.png" alt="Logo SiJaga" width={100} height={100} />
             </div>
             <div className="flex items-center gap-3">
-              <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
+              <div className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
                 {profileName || "Memuat..."}
               </div>
               <div className="rounded-full flex items-center justify-center">
@@ -247,7 +278,7 @@ const History = () => {
           </div>
 
           {/* Search & Filter */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 max-h-[550px]">
+          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 mb-10 max-h-[550px]">
             <p className="text-2xl font-bold text-[#3650A2] pb-4">History</p>
             <div className="relative mb-6">
               <input

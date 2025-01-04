@@ -191,10 +191,10 @@ const DashboardSection = () => {
 
   return (
     <div
-    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-32 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
+    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-16 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 max-w-[1200px] mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 sm:mb-8 max-w-[1200px] mx-auto">
         {/* Logo dan Dashboard */}
         <div className="flex items-center">
           <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
