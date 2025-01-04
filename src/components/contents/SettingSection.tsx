@@ -86,9 +86,34 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     }
   };
 
-  return (
-    <div className="flex flex-col lg:flex-row w-full space-y-6 lg:space-y-0 lg:space-x-6 min-y-screen pl-12">
-      {/* Bagian Kiri */}
+  useEffect(() => {
+    const fetchCardId = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
+        console.log('API Response untuk Card ID:', response?.data);
+
+        const cardIdFromApi = response?.data?.data?.card_id;
+
+        if (cardIdFromApi) {
+          setCardId(cardIdFromApi); // Simpan card_id ke dalam state
+        } else {
+          setError('Card ID tidak ditemukan dalam respons API.');
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Gagal mengambil Card ID');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCardId();
+  }, []);
+
+ return (
+    <div className="flex flex-col lg:flex-row w-full space-y-4 lg:space-y-6 lg:space-x-3 lg:mt-10">
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
         <div className="text-[#3650A2] flex flex-col items-center">
         <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">

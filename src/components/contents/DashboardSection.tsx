@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import Cookies from "js-cookie";
+
 import { jakarta } from "@/styles/fonts";
 import { io, Socket } from "socket.io-client";
 
@@ -190,39 +190,47 @@ const DashboardSection = () => {
 }, []);
 
   return (
-    <div className={` ${jakarta.className} py-12 px-6  min-y-screen `}>
+    <div
+    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-32 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold text-blue flex items-center">
-          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 w-6 h-6" />
-          Dashboard
-        </h1>
-        <div className="flex items-center space-x-2">
-          <span className="text-white bg-[#3650A2] rounded-full px-4 py-1 font-bold tracking-widest">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 max-w-[1200px] mx-auto">
+        {/* Logo dan Dashboard */}
+        <div className="flex items-center">
+          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
+          <h1 className="text-lg sm:text-xl  font-bold text-blue">Dashboard</h1>
+        </div>
+
+        {/* Profil */}
+        <div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
+          <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
             {profileName || "Memuat..."}
           </span>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+          <div className=" rounded-full flex items-center justify-center">
             <Image
               src="/human.png"
               alt="User Icon"
-              width={32}
-              height={32}
+              width={40}
+              height={40}
               className="rounded-full"
             />
           </div>
         </div>
+
+
       </div>
 
       {/* Main Content */}
-      <div className="lg:mt-24">
+      <div className="lg:mt-20">
+        
         <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#385CBD] to-[#3650A2] rounded-3xl p-6 shadow-lg pb-8 items-center">
           {/* Section Header */}
-          <h1 className="text-white text-3xl font-bold mb-4">Terkini</h1>
+          <h1 className="text-white text-2xl md:text-3xl font-bold mb-4">Terkini</h1>
 
           {/* Main Grid */}
           <div className="grid grid-rows-2 gap-6">
             {/* Card 1: Pengguna Terakhir */}
-            <div className="bg-white text-gray-800 rounded-3xl p-6 shadow-lg flex items-center grid grid-cols-2 gap-6">
+            <div className="bg-white text-gray-800 rounded-3xl p-6 shadow-lg flex items-center grid grid-cols-1 grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-6">
               <div className="flex items-center space-x-4">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center">
                   <Image
@@ -234,15 +242,15 @@ const DashboardSection = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="font-light text-gray-500 text-xl">
+                  <h2 className="font-light text-gray-500 text-md md:text-xl">
                     Pengguna Terakhir
                   </h2>
-                  <p className="text-gray-800 text-3xl font-bold tracking-wider">
+                  <p className="text-gray-800 text-xl md:text-3xl font-bold tracking-wider">
                     {loading ? "Memuat..." : lastUser.name || "Tidak ditemukan"}
                   </p>
                 </div>
               </div>
-              <div className="bg-[#3650A2] text-white p-3 rounded-2xl shadow-md flex items-center justify-center space-x-4 lg:max-w-[580px]">
+              <div className="bg-[#3650A2] text-white p-3 rounded-2xl shadow-md flex items-center justify-center space-x-8 md:space-x-10 lg:space-x-4 lg:max-w-[580px]">
                 <Image
                   src="/gembok-icon.png"
                   alt="Clock Icon"
@@ -250,7 +258,7 @@ const DashboardSection = () => {
                   height={36}
                   className="w-9 h-9"
                 />
-                <p className="text-xl font-semibold">
+                <p className="text-lg md:text-xl font-semibold">
                   {loading
                     ? "Memuat..."
                     : new Date(lastUser.timestamp).toLocaleString() || "N/A"}
@@ -259,23 +267,23 @@ const DashboardSection = () => {
             </div>
 
             {/* Row 2: Two Cards */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               {/* Card 2: Status Barang */}
-              <div className="bg-white rounded-3xl p-4 shadow-lg flex items-center space-x-4">
-                <div className="w-16 h-16 bg-[#3650A2] rounded-[20px] flex items-center justify-center">
+              <div className="bg-white rounded-3xl p-4 shadow-lg flex items-center space-x-4 ">
+                <div className="w-16 h-16 md:w-16 md:h-16 bg-[#3650A2] rounded-[20px] flex items-center justify-center">
                   <Image
                     src="/Subtract.png"
                     alt="Status Barang"
                     width={48}
                     height={48}
-                    className="w-9 h-9"
+                    className="w-9 h-9 "
                   />
                 </div>
                 <div>
-                  <h2 className="text-gray-300 font-medium text-lg">
+                  <h2 className="text-gray-300 font-medium text-base md:text-lg">
                     Status Barang
                   </h2>
-                  <p className="text-[#02BA80] text-2xl font-bold">
+                  <p className="text-[#02BA80] text-md md:text-2xl font-bold">
                     {loading ? "Memuat..." : (availableStatus).toUpperCase() || "Tidak ditemukan"}
                   </p>
                 </div>
@@ -297,10 +305,10 @@ const DashboardSection = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-medium text-lg opacity-75">
+                  <h2 className="text-white font-medium text-base md:text-lg opacity-75">
                     Kondisi SiJaga
                   </h2>
-                  <p className="text-2xl font-bold">
+                  <p className="text-lg md:text-2xl font-bold">
                     {loading
                       ? "Memuat..."
                       : (lastUser.status || "Tidak tersedia").toUpperCase()}
