@@ -164,26 +164,27 @@ const DashboardSection = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 max-w-[1200px] mx-auto">
         {/* Logo dan Dashboard */}
-        <div className="flex items-center">
+        <div className="hidden lg:flex items-center">
           <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
           <h1 className="text-lg sm:text-xl  font-bold text-blue">Dashboard</h1>
         </div>
 
-        {/* Profil */}
-        <div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
-          <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
-            {profileName || "Memuat..."}
-          </span>
-          <div className=" rounded-full flex items-center justify-center">
-            <Image
-              src="/human.png"
-              alt="User Icon"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          </div>
-        </div>
+      {/* Profil */}
+<div className="flex items-center space-x-2 mt-0 sm:mt-0 ml-auto w-full justify-end lg:ml-0">
+  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+    {profileName || "Memuat..."}
+  </span>
+  <div className="rounded-full flex items-center justify-center">
+    <Image
+      src="/human.png"
+      alt="User Icon"
+      width={40}
+      height={40}
+      className="rounded-full"
+    />
+  </div>
+</div>
+
 
 
       </div>
