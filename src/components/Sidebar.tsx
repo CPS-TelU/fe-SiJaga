@@ -13,6 +13,7 @@ import {
 } from "react-icons/fi";
 import Cookies from "js-cookie";
 
+
 const Sidebar: React.FC = () => {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const router = useRouter();
@@ -57,7 +58,7 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     { href: "/dashboard", label: "Beranda", icon: FiHome },
     { href: "/riwayat", label: "Riwayat", icon: FiClock },
-    { href: "/setting", label: "Pengaturan", icon: FiEdit },
+    { href: "/setting", label: "Daftar", icon: FiEdit },
   ];
 
   return (
@@ -133,12 +134,13 @@ const Sidebar: React.FC = () => {
 
         <button
           onClick={handleLogout}
-          className="group mt-4 mb-2 p-1 rounded-lg"
+          className="group flex items-center mt-4 mb-2 p-1 rounded-lg hover:bg-[#2b3d7d] transition-colors"
         >
           <FiLogOut
             size={24}
             className="transition duration-300 transform group-hover:scale-125"
           />
+          <span className="ml-2 text-sm font-semibold">Keluar</span>
         </button>
       </div>
 
