@@ -172,9 +172,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           <p className="text-center text-black mt-4 lg:translate-y-[80px]">
             Pindai kartu akses yang ingin didaftarkan pada box SiJaga
           </p>
-          <p className="text-center mt-4 font-semibold">
-            Status Koneksi: <span className={socketStatus === 'Connected' ? 'text-green-500' : 'text-red-500'}>{socketStatus}</span>
-          </p>
+         
         </div>
       </div>
 

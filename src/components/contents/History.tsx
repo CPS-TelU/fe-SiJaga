@@ -243,7 +243,13 @@ const History = () => {
                     className="rounded-full"
                 />
               </div>
-             
+              <Image
+                src="/human.png"
+                alt="Profile Icon"
+                width={40}
+                height={40}
+                className="rounded-full border border-gray-300"
+              />
             </div>
           </div>
 
