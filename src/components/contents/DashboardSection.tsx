@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-
+import Cookies from "js-cookie";
 import { jakarta } from "@/styles/fonts";
 import { io, Socket } from "socket.io-client";
 
