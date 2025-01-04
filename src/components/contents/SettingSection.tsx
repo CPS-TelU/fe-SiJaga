@@ -27,25 +27,21 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 
   useEffect(() => {
     const socket = io('https://sijaga-be.vercel.app/', {
-      transports: ['polling', 'websocket'], // Sesuaikan transport backend
+      transports: ['polling', 'websocket'],
     });
 
-    // Event handler ketika koneksi berhasil
     socket.on('connect', () => {
       setSocketStatus('Connected');
     });
 
-    // Event handler ketika koneksi terputus
     socket.on('disconnect', () => {
       setSocketStatus('Disconnected');
     });
 
-    // Menerima pesan dari server
     socket.on('message', (data: any) => {
       console.log('Pesan dari server:', data);
     });
 
-    // Error handler
     socket.on('error', (err: any) => {
       console.error('Socket.IO error:', err);
     });
@@ -74,13 +70,11 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     }
 
     if (!cardId) {
-      console.log('Card ID kosong:', cardId);
       setError('Card ID tidak ditemukan. Harap coba lagi.');
       return;
     }
 
     if (!name || !email || !password) {
-      console.log('Data tidak lengkap:', { name, email, password });
       setError('Nama, Email, dan Password harus diisi.');
       return;
     }
@@ -106,41 +100,34 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
+      setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      if (error.response) {
-        console.log('Response Error:', error.response.data);
-        setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
+  const fetchCardId = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
+      const cardIdFromApi = response?.data?.data?.card_id;
+      if (cardIdFromApi) {
+        setCardId(cardIdFromApi);
       } else {
-        setError('Terjadi kesalahan, tidak dapat terhubung ke server.');
+        setError('Card ID tidak ditemukan dalam respons API.');
+        console.error('Card ID missing in API response:', response?.data);
       }
+    } catch (err: any) {
+      console.error('Error fetching Card ID:', err);
+      setError(err.response?.data?.message || 'Gagal mengambil Card ID');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchCardId = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
-        console.log('API Response untuk Card ID:', response?.data);
-
-        const cardIdFromApi = response?.data?.data?.card_id;
-
-        if (cardIdFromApi) {
-          setCardId(cardIdFromApi);
-        } else {
-          setError('Card ID tidak ditemukan dalam respons API.');
-        }
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Gagal mengambil Card ID');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCardId();
   }, []);
 
@@ -148,7 +135,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     <div className="flex flex-col lg:flex-row w-full space-y-4 lg:space-y-6 lg:space-x-3 lg:mt-10 lg:ml-28 xl:ml-0 ">
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
         <div className="text-[#3650A2] flex flex-col items-center">
-          <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
+          <h1 className="hidden text-xl font-bold text-blue-900 lg:flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
             <Image
               src="/logo.png"
               alt="Dashboard Icon"
@@ -172,18 +159,13 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           <p className="text-center text-black mt-4 lg:translate-y-[80px]">
             Pindai kartu akses yang ingin didaftarkan pada box SiJaga
           </p>
-         
         </div>
       </div>
 
       <div className="w-full lg:w-1/2">
         <div className="bg-white p-6 rounded-lg shadow-md lg:mt-20 lg:mr-20 lg:ml-20 lg:mb-20">
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">
-            Tambahkan Kredensial Kartu Baru
-          </h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Masukkan informasi kartu untuk memberikan akses baru.
-          </p>
+          <h3 className="text-xl font-semibold mb-2 text-gray-800">Tambahkan Kredensial Kartu Baru</h3>
+          <p className="text-sm text-gray-600 mb-4">Masukkan informasi kartu untuk memberikan akses baru.</p>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

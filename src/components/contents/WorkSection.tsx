@@ -28,7 +28,7 @@ export default function CaraKerja() {
                     alt="vector"
                     width={372.5}
                     height={30}
-                    className="absolute left-4 lg:left-36 bottom-1 md:left-8 md:bottom-0"
+                    className="absolute left-4 lg:left-0 bottom-1 md:left-8 md:bottom-0"
                     />
                 </div>
                 <ul className="text-sm sm:text-base text-gray-600 space-y-2 mt-8 md:text-md list-image-[url('/.png')]">
