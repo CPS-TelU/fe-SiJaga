@@ -59,7 +59,7 @@ const LoginPage: React.FC = () => {
         {/* Left Section */}
         <div className="md:col-span-8 flex flex-col items-start px-4 md:px-12">
           <Link href="/" className="mb-6 md:mb-8">
-            <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300">
+            <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300 mt-2 md:mt-0">
               <Image
                 src="/icon-back.png"
                 alt="back"
@@ -70,10 +70,10 @@ const LoginPage: React.FC = () => {
             </div>
           </Link>
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-relaxed mb-2">
-            Makin Aman <br /> Bersama{" "}
+            Makin Aman <br className="hidden md:flex" /> Bersama{" "}
             <span className="text-[#3650A2]">SiJaga</span>
           </h1>
-          <div className="ml-32 flex justify-center items-center">
+          <div className="hidden md:flex ml-32 flex justify-center items-center">
             <Image
               src="/Vector.png"
               alt="Vector Illustration"
@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
               className="max-w-full h-auto"
             />
           </div>
-          <div className="mt-4 md:mt-6">
+          <div className="mt-4 md:mt-6 hidden md:flex">
             <Image
               src="/Gambar Locker.png"
               alt="Safe Illustration"
@@ -95,7 +95,7 @@ const LoginPage: React.FC = () => {
 
         {/* Right Section (Card) */}
         <div className="md:col-span-4 flex justify-center">
-          <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 md:p-12 max-w-[850px] w-full">
+          <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 md:p-12 md:min-w-[300px] max-w-[850px] w-full mb-12 md:mb-0 ">
             <div className="flex flex-col items-left mb-6">
               <Image
                 src="/logo sijaga white.png"
