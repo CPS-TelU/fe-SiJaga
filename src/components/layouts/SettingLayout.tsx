@@ -12,7 +12,7 @@ const SettingLayout: React.FC = () => {
   };
 
   return (
-    <div className=" flex bg-gray-100 text-gray-800">
+    <div>
       {/* Sidebar */}
       <Sidebar />
 

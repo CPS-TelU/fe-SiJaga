@@ -234,15 +234,7 @@ const History = () => {
               <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
                 {profileName || "Memuat..."}
               </div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <Image
-                    src="/human.png"
-                    alt="User Icon"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                />
-              </div>
+
               <Image
                 src="/human.png"
                 alt="Profile Icon"
