@@ -1,13 +1,18 @@
-
-"use client";
-
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-
-import { jakarta } from "@/styles/fonts";
 import Cookies from "js-cookie";
+import { jakarta } from "@/styles/fonts";
+import { io, Socket } from "socket.io-client";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const HISTORY_LATEST_URL = `${API_BASE_URL}/history/latest`;
+const HISTORY_LATEST_BOX_STATUS_URL = `${API_BASE_URL}/history/latest-box-status`;
+const USER_PROFILE_URL = `${API_BASE_URL}/user-ess/whoami`;
+
 
 const DashboardSection = () => {
+  const socketRef = useRef<Socket | null>(null);
   const [lastUser, setLastUser] = useState({
     id: null,
     name: "Memuat...",
@@ -56,6 +61,33 @@ const DashboardSection = () => {
       setError("Gagal memuat profil pengguna.");
     }
   };
+
+  useEffect(() => {
+    const socketHistory = io(HISTORY_LATEST_URL, {
+      transports: ["polling"],
+      withCredentials: true,
+    });
+  
+    const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL, {
+      transports: ["polling"],
+      withCredentials: true,
+    });
+  
+    socketRef.current = socketHistory;
+  
+    socketHistory.on("connect", () => {
+      console.log("Connected to HISTORY_LATEST_URL");
+    });
+  
+    socketBoxStatus.on("connect", () => {
+      console.log("Connected to HISTORY_LATEST_BOX_STATUS_URL");
+    });
+  
+    return () => {
+      socketHistory.disconnect();
+      socketBoxStatus.disconnect();
+    };
+  }, []);
 
   const fetchLastUser = async () => {
     setLoading(true);
@@ -159,10 +191,10 @@ const DashboardSection = () => {
 
   return (
     <div
-    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-32 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
+    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-16 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 max-w-[1200px] mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 sm:mb-8 max-w-[1200px] mx-auto">
         {/* Logo dan Dashboard */}
         <div className="hidden lg:flex items-center">
           <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />

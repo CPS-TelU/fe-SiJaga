@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
       const response = await axios.post(
         LOGIN_API_URL,
         {
-          email, 
+          email,
           password,
         },
         {
@@ -55,48 +55,59 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className={`${jakarta.className} min-h-screen flex items-center justify-center`}>
-      <div className="container mx-auto px-4 sm:px-8 md:px-20 grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8">
+      <div className="container mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 flex flex-col md:flex-row items-start gap-6 lg:gap-12">
         {/* Left Section */}
-        <div className="md:col-span-8 flex flex-col items-start px-4 md:px-12">
-          <Link href="/" className="mb-6 md:mb-8">
-            <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300 mt-2 md:mt-0">
+        <div className="md:w-1/2 w-full flex flex-col ml-4">
+          {/* Icon Back - Mobile */}
+          <div className="sm:hidden flex justify-start mb-4">
+            <Link href="/">
+              <div className="w-10 h-10 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300">
+                <Image
+                  src="/icon-back.png"
+                  alt="back"
+                  width={10}
+                  height={10}
+                  className="max-w-full h-auto"
+                />
+              </div>
+            </Link>
+          </div>
+
+          {/* Content */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 lg:px-8">
+            {/* Icon Back - Desktop */}
+            <div className="hidden sm:block mb-6">
+              <Link href="/">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300">
+                  <Image
+                    src="/icon-back.png"
+                    alt="back"
+                    width={10}
+                    height={10}
+                    className="max-w-full h-auto"
+                  />
+                </div>
+              </Link>
+            </div>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-relaxed mb-4">
+              Makin Aman <br /> Bersama <span className="text-[#3650A2]">SiJaga</span>
+            </h1>
+            <div className="hidden md:block mt-4">
               <Image
-                src="/icon-back.png"
-                alt="back"
-                width={10}
-                height={10}
+                src="/Gambar Locker.png"
+                alt="Safe Illustration"
+                width={400}
+                height={400}
                 className="max-w-full h-auto"
               />
             </div>
-          </Link>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-relaxed mb-2">
-            Makin Aman <br className="hidden md:flex" /> Bersama{" "}
-            <span className="text-[#3650A2]">SiJaga</span>
-          </h1>
-          <div className="hidden md:flex ml-32 flex justify-center items-center">
-            <Image
-              src="/Vector.png"
-              alt="Vector Illustration"
-              width={200}
-              height={200}
-              className="max-w-full h-auto"
-            />
-          </div>
-          <div className="mt-4 md:mt-6 hidden md:flex">
-            <Image
-              src="/Gambar Locker.png"
-              alt="Safe Illustration"
-              width={400}
-              height={400}
-              className="max-w-full h-auto"
-            />
           </div>
         </div>
 
-        {/* Right Section (Card) */}
-        <div className="md:col-span-4 flex justify-center">
-          <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 md:p-12 md:min-w-[300px] max-w-[850px] w-full mb-12 md:mb-0 ">
-            <div className="flex flex-col items-left mb-6">
+        {/* Right Section */}
+        <div className="md:w-1/2 w-full flex justify-center md:justify-start ml-4">
+          <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 lg:p-12 max-w-[500px] w-full min-w-[300px]">
+            <div className="flex flex-col items-center mb-6">
               <Image
                 src="/logo sijaga white.png"
                 alt="SiJaga Logo"
@@ -110,7 +121,7 @@ const LoginPage: React.FC = () => {
               </p>
             </div>
 
-            <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="email"

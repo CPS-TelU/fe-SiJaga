@@ -58,6 +58,7 @@ const Sidebar: React.FC = () => {
     { href: "/dashboard", label: "Beranda", icon: FiHome },
     { href: "/riwayat", label: "Riwayat", icon: FiClock },
     { href: "/setting", label: "Daftar", icon: FiEdit },
+    { href: "/setting", label: "Daftar", icon: FiEdit },
   ];
 
   return (
