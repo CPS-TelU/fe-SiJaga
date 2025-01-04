@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 const Sidebar: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
+ 
 
   // Fungsi logout dengan perbaikan handling token dan respons
   const handleLogout = async () => {
