@@ -16,6 +16,7 @@ export default function Footer() {
                                 alt="iconfig"
                                 width={20}
                                 height={20}
+                                className="w-[20px] h-[20px]"
                             />
                             <h1 className="text-xl font-bold">SiJaga</h1>
                         </div>
