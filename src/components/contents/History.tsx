@@ -246,7 +246,7 @@ const History = () => {
           </div>
 
           {/* Search & Filter */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 max-h-[550px]">
+          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 lg:max-h-[500px] xl:min-h-[500px]">
             <p className="text-2xl font-bold text-[#3650A2] pb-4">History</p>
             <div className="relative mb-6">
               <input
