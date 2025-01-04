@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import io from 'socket.io-client';
 
 interface SettingSectionProps {
   isRegistered: boolean;
@@ -22,6 +23,37 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cardId, setCardId] = useState<string | null>(null);
+  const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
+
+  useEffect(() => {
+    const socket = io('https://sijaga-be.vercel.app/', {
+      transports: ['polling', 'websocket'], // Sesuaikan transport backend
+    });
+
+    // Event handler ketika koneksi berhasil
+    socket.on('connect', () => {
+      setSocketStatus('Connected');
+    });
+
+    // Event handler ketika koneksi terputus
+    socket.on('disconnect', () => {
+      setSocketStatus('Disconnected');
+    });
+
+    // Menerima pesan dari server
+    socket.on('message', (data: any) => {
+      console.log('Pesan dari server:', data);
+    });
+
+    // Error handler
+    socket.on('error', (err: any) => {
+      console.error('Socket.IO error:', err);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handleRegisterSuccess = () => {
     setCurrentImage('/scanimage-success.png');
@@ -54,32 +86,28 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     }
 
     setLoading(true);
-    setError(null); // Reset error sebelum submit
+    setError(null);
 
     try {
-      // Data yang akan dikirim ke API
       const data = {
         name,
         email,
         card_id: cardId,
-        password, // Tambahkan password
+        password,
       };
 
-      // Panggilan POST ke endpoint registrasi
       const response = await axios.post(
         process.env.NEXT_PUBLIC_USER_REGISTER_URL!,
         data
       );
 
-      console.log('Response:', response.data); // Debug respons server
+      console.log('Response:', response.data);
 
-      // Jika sukses, panggil handleRegisterSuccess
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
 
       if (error.response) {
-        // Menampilkan pesan error dari server jika ada
         console.log('Response Error:', error.response.data);
         setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
       } else {
@@ -102,7 +130,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         const cardIdFromApi = response?.data?.data?.card_id;
 
         if (cardIdFromApi) {
-          setCardId(cardIdFromApi); // Simpan card_id ke dalam state
+          setCardId(cardIdFromApi);
         } else {
           setError('Card ID tidak ditemukan dalam respons API.');
         }
@@ -116,21 +144,20 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     fetchCardId();
   }, []);
 
- return (
+  return (
     <div className="flex flex-col lg:flex-row w-full space-y-4 lg:space-y-6 lg:space-x-3 lg:mt-10">
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
         <div className="text-[#3650A2] flex flex-col items-center">
-        <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
-  <Image
-    src="/logo.png"
-    alt="Dashboard Icon"
-    className="mr-2 mb-2"
-    width={24}
-    height={24}
-  />
-  SiJaga
-</h1>
-
+          <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
+            <Image
+              src="/logo.png"
+              alt="Dashboard Icon"
+              className="mr-2 mb-2"
+              width={24}
+              height={24}
+            />
+            SiJaga
+          </h1>
 
           <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
 
@@ -145,6 +172,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           <p className="text-center text-black mt-4 lg:translate-y-[80px]">
             Pindai kartu akses yang ingin didaftarkan pada box SiJaga
           </p>
+         
         </div>
       </div>
 
@@ -226,4 +254,3 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 };
 
 export default SettingSection;
-
