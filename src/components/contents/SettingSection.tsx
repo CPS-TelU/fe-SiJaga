@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -9,6 +9,10 @@ interface SettingSectionProps {
   isRegistered: boolean;
   onRegisterSuccess: () => void;
 }
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const CARD_API_URL = `${API_BASE_URL}/card-id/latest`;
+const REGISTER_API_URL = `${API_BASE_URL}/user/register`;
 
 const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegisterSuccess }) => {
   const [zoomOut, setZoomOut] = useState(false);
@@ -63,7 +67,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validasi awal
     if (!confirm) {
       setError('Harap konfirmasi untuk melanjutkan.');
       return;
@@ -81,6 +84,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 
     setLoading(true);
     setError(null);
+    setError(null);
 
     try {
       const data = {
@@ -90,10 +94,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         password,
       };
 
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_USER_REGISTER_URL!,
-        data
-      );
+      const response = await axios.post(REGISTER_API_URL, data);
 
       console.log('Response:', response.data);
 
@@ -148,7 +149,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 
           <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
 
-          <div className={`w-70 h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
+          <div className={`w-60 h-60 md:w-70 md:h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
             <img
               src={currentImage}
               alt="Scan Icon"
