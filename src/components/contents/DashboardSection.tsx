@@ -64,25 +64,56 @@ const DashboardSection = () => {
 
   useEffect(() => {
     const socketHistory = io(HISTORY_LATEST_URL, {
-      transports: ["polling"],
+      transports: ["websocket", "polling"], // Improved transport options
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      timeout: 20000,
     });
-  
+
     const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL, {
-      transports: ["polling"],
+      transports: ["websocket", "polling"], // Improved transport options
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      timeout: 20000,
     });
-  
-    socketRef.current = socketHistory;
-  
+
     socketHistory.on("connect", () => {
       console.log("Connected to HISTORY_LATEST_URL");
     });
-  
+
     socketBoxStatus.on("connect", () => {
       console.log("Connected to HISTORY_LATEST_BOX_STATUS_URL");
     });
-  
+
+    socketHistory.on("latestUsageHistory", (data) => {
+      setLastUser({
+        id: data.id || null,
+        name: data.name || "Tidak ditemukan",
+        timestamp: data.Timestamp || "",
+        status: data.status || "",
+        cardId: data.card_id || "",
+      });
+    });
+
+    socketBoxStatus.on("latestBoxStatus", (data) => {
+      setAvailableStatus(data.status || "Tidak tersedia");
+    });
+
+    socketHistory.on("error", (err) => {
+      console.error("WebSocket error in HISTORY_LATEST_URL:", err);
+      setError("Error in WebSocket connection for History.");
+    });
+
+    socketBoxStatus.on("error", (err) => {
+      console.error("WebSocket error in HISTORY_LATEST_BOX_STATUS_URL:", err);
+      setError("Error in WebSocket connection for Box Status.");
+    });
+
+    // Assign socket reference
+    socketRef.current = socketHistory;
+
     return () => {
       socketHistory.disconnect();
       socketBoxStatus.disconnect();
@@ -202,32 +233,26 @@ const DashboardSection = () => {
         </div>
 
       {/* Profil */}
-<div className="flex items-center space-x-2 mt-0 sm:mt-0 ml-auto w-full justify-end lg:ml-0">
-  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
-    {profileName || "Memuat..."}
-  </span>
-  <div className="rounded-full flex items-center justify-center">
-    <Image
-      src="/human.png"
-      alt="User Icon"
-      width={40}
-      height={40}
-      className="rounded-full"
-    />
-  </div>
-</div>
-
-
-
+      <div className="flex items-center space-x-2 mt-0 sm:mt-0 ml-auto w-full justify-end lg:ml-0">
+        <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+          {profileName || "Memuat..."}
+        </span>
+        <div className="rounded-full flex items-center justify-center">
+          <Image
+            src="/human.png"
+            alt="User Icon"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>
       </div>
-
+      </div>
       {/* Main Content */}
       <div className="lg:mt-20">
-        
         <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#385CBD] to-[#3650A2] rounded-3xl p-6 shadow-lg pb-8 items-center">
           {/* Section Header */}
           <h1 className="text-white text-2xl md:text-3xl font-bold mb-4">Terkini</h1>
-
           {/* Main Grid */}
           <div className="grid grid-rows-2 gap-6">
             {/* Card 1: Pengguna Terakhir */}
