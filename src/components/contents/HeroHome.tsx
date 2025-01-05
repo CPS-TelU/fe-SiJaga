@@ -6,7 +6,7 @@ import Link from "next/link";
 const Home = () => {
   return (
     <div className={`${jakarta.className} min-h-screen flex items-center justify-center bg-[url('/Element.png')] bg-cover bg-center`}>
-      <div className="container mx-auto px-4 py-12 sm:py-16 md:py-6 lg:py-0 sm:px-8 md:px-20 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 md:gap-16">
+      <div className="container mx-auto px-4 py-12 sm:py-16 md:py-6 lg:py-0 sm:px-8 md:px-20 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 md:gap-16 md:mt-12">
         <div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-3xl xl:text-5xl 2xl:text-5xl  font-bold text-gray-800 leading-snug md:mt-12">
             Dokumen Makin Terjaga Bersama SiJaga
@@ -34,7 +34,7 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="flex justify-center lg:justify-end  md:pr-6 lg:pr-2 mb-8 ">
+        <div className="hidden lg:flex justify-center lg:justify-end  md:pr-6 lg:pr-2 mb-8 ">
           <Image
             src="/Group 342.png"
             alt="Icon"

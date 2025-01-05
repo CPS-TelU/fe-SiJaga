@@ -8,8 +8,7 @@ import {
   FiEdit,
   FiClock,
   FiLogOut,
-  FiChevronRight,
-  FiChevronLeft,
+  FiMenu,
 } from "react-icons/fi";
 import Cookies from "js-cookie";
 
@@ -69,7 +68,8 @@ const Sidebar: React.FC = () => {
         />
       )}
 
-      <div className="fixed hidden lg:flex bg-[#3650A2] text-white w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl min-h-[500px] xl:min-h-[100px] lg:min-h-[500px] xl:max-h-[700px] z-50">
+      {/* Sidebar for larger screens (lg and up) */}
+      <div className="fixed hidden lg:flex bg-[#3650A2] text-white w-10 md:w-20 flex flex-col justify-between items-center p-6 ml-10 mt-10 rounded-3xl lg:min-h-[670px] z-50">
         <nav className="space-y-6">
           {menuItems.map((item) => (
             <Link
@@ -110,6 +110,7 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
 
+      {/* Sidebar for smaller screens (lg and below) */}
       <div
         className={`fixed lg:hidden top-0 left-0 h-full bg-[#3650A2] text-white z-50 transform transition-transform duration-300 ${
           isSidebarVisible ? "translate-x-0" : "-translate-x-full"
@@ -120,7 +121,9 @@ const Sidebar: React.FC = () => {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex items-center text-sm p-3 rounded-lg"
+              className={`group flex items-center text-sm p-3 rounded-lg transition-all duration-300 hover:bg-[#2C4390] ${
+                isActive(item.href) ? "text-[#FFE492]" : ""
+              }`}
             >
               <item.icon
                 size={24}
@@ -142,12 +145,15 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
 
-      <button
-        onClick={() => setSidebarVisible(!isSidebarVisible)}
-        className="fixed top-6 left-6 lg:hidden bg-[#3650A2] text-white p-2 rounded-full shadow-lg z-50"
-      >
-        {isSidebarVisible ? <FiChevronLeft size={24} /> : <FiChevronRight size={24} />}
-      </button>
+      {/* Hamburger button for smaller screens */}
+      {!isSidebarVisible && (
+        <button
+          onClick={() => setSidebarVisible(true)}
+          className="fixed top-[40px] left-0 lg:hidden bg-[#3650A2] text-white p-3 rounded-r-full z-50 transform transition-transform duration-300"
+        >
+          <FiMenu size={24} />
+        </button>
+      )}
     </>
   );
 };
