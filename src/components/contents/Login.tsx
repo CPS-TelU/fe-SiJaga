@@ -105,7 +105,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* Right Section */}
-        <div className="md:w-1/2 w-full flex justify-center md:justify-start ">
+        <div className="md:w-1/2 w-full flex justify-center md:justify-start">
           <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 lg:p-12 max-w-[500px] w-full min-w-[300px]">
             <div className="flex flex-col items-center mb-6">
               <Image

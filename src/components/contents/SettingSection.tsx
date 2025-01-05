@@ -30,30 +30,37 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
 
   useEffect(() => {
-    const socket = io('https://sijaga-be.vercel.app/', {
-      transports: ['polling', 'websocket'],
+    const socket = io('https://sijaga-railway-production.up.railway.app', {
+      transports: ['websocket', 'polling'], // Tambahkan kedua metode transport
+      withCredentials: true,               // Izinkan cookie & CORS
+      reconnection: true,                  // Aktifkan reconnection otomatis
+      reconnectionAttempts: 5,             // Batasi upaya reconnection
+      timeout: 20000,                      // Waktu tunggu koneksi
     });
-
+  
     socket.on('connect', () => {
       setSocketStatus('Connected');
+      console.log('WebSocket connected!');
     });
-
+  
     socket.on('disconnect', () => {
       setSocketStatus('Disconnected');
+      console.log('WebSocket disconnected!');
     });
-
-    socket.on('message', (data: any) => {
-      console.log('Pesan dari server:', data);
+  
+    socket.on('card-scanned', (data) => {
+      console.log('Card scanned:', data);
+      setCardId(data.card_id);
     });
-
-    socket.on('error', (err: any) => {
-      console.error('Socket.IO error:', err);
+  
+    socket.on('error', (err) => {
+      console.error('WebSocket error:', err);
     });
-
+  
     return () => {
-      socket.disconnect();
+      socket.disconnect(); // Pastikan koneksi ditutup saat komponen unmount
     };
-  }, []);
+  }, []);  
 
   const handleRegisterSuccess = () => {
     setCurrentImage('/scanimage-success.png');
@@ -112,17 +119,17 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
+      const response = await axios.get(CARD_API_URL);
       const cardIdFromApi = response?.data?.data?.card_id;
       if (cardIdFromApi) {
         setCardId(cardIdFromApi);
       } else {
-        setError('Card ID tidak ditemukan dalam respons API.');
-        console.error('Card ID missing in API response:', response?.data);
+        setError("Card ID tidak ditemukan dalam respons API.");
+        console.error("Card ID missing in API response:", response?.data);
       }
     } catch (err: any) {
-      console.error('Error fetching Card ID:', err);
-      setError(err.response?.data?.message || 'Gagal mengambil Card ID');
+      console.error("Error fetching Card ID:", err);
+      setError(err.response?.data?.message || "Gagal mengambil Card ID");
     } finally {
       setLoading(false);
     }

@@ -31,6 +31,7 @@ const History = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
+  const SOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "https://sijaga-railway-production.up.railway.app";
 
   // Fetch user profile
   useEffect(() => {
@@ -118,44 +119,33 @@ const History = () => {
   }, [router]);
 
   useEffect(() => {
-    const socket = io(URL, {
-      transports: ["pooling"],
+    const socket = io(SOCKET_URL, {
+      transports: ["websocket", "polling"],
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      timeout: 20000,
     });
+
     socketRef.current = socket;
+
     socket.on("connect", () => {
-      console.log("Connected to the server");
+      console.log("WebSocket connected!");
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  // Filter data saat pencarian diubah
-  useEffect(() => {
-    const socket = io(URL, {
-      transports: ["pooling"],
-      withCredentials: true,
-    });
-    socketRef.current = socket;
-    socket.on("connect", () => {
-      console.log("Connected to the server");
+    socket.on("disconnect", () => {
+      console.log("WebSocket disconnected!");
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const socket = io(URL, {
-      transports: ["pooling"],
-      withCredentials: true,
+    // Listen for real-time updates
+    socket.on("history-updated", (newHistoryItem: HistoryItem) => {
+      console.log("New history item received:", newHistoryItem);
+      setHistoryData((prevHistory) => [newHistoryItem, ...prevHistory]);
+      setFilteredHistoryData((prevHistory) => [newHistoryItem, ...prevHistory]);
     });
-    socketRef.current = socket;
-    socket.on("connect", () => {
-      console.log("Connected to the server");
+
+    socket.on("error", (err) => {
+      console.error("WebSocket error:", err);
     });
 
     return () => {
