@@ -18,7 +18,6 @@ interface HistoryItem {
 
 const History = () => {
   const router = useRouter();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState("Kondisi");
   const [selectedTime, setSelectedTime] = useState("Waktu");
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,7 +30,7 @@ const History = () => {
   const [isConditionDropdownOpen, setIsConditionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const socketRef = useRef<Socket | null>(null);
-  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
+  const URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
   // Fetch user profile
   useEffect(() => {
@@ -64,8 +63,9 @@ const History = () => {
         } else {
           throw new Error("Data pengguna tidak valid.");
         }
-      } catch (error) {
-        setError("Gagal memuat profil pengguna.");
+      } catch (err) {
+        console.error(err); // Optional: Log the error for debugging
+        setError("Gagal memuat data history.");
       }
     };
 
@@ -161,7 +161,7 @@ const History = () => {
       socket.off("usageHistory_update");
       socket.disconnect();
     };
-  }, []);
+  }, [URL]);
   
   
 

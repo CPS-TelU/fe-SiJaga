@@ -8,9 +8,9 @@ import Cookies from "js-cookie"; // Import js-cookie
 import axios from "axios";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState(""); // Ubah state dari username ke email
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -25,16 +25,8 @@ const LoginPage: React.FC = () => {
     try {
       const response = await axios.post(
         LOGIN_API_URL,
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { email, password },
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
       const { token } = response.data;
       Cookies.set("token", token, { expires: 7 });
@@ -56,36 +48,19 @@ const LoginPage: React.FC = () => {
   return (
     <div className={`${jakarta.className} min-h-screen flex items-center justify-center`}>
       <div className="container mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 flex flex-col md:flex-row items-start gap-6 lg:gap-12">
-        {/* Left Section */}
         <div className="md:w-1/2 w-full flex flex-col ml-4">
-          {/* Icon Back - Mobile */}
           <div className="sm:hidden flex justify-start mb-4">
             <Link href="/">
               <div className="w-10 h-10 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300">
-                <Image
-                  src="/icon-back.png"
-                  alt="back"
-                  width={10}
-                  height={10}
-                  className="max-w-full h-auto"
-                />
+                <Image src="/icon-back.png" alt="back" width={10} height={10} className="max-w-full h-auto" />
               </div>
             </Link>
           </div>
-
-          {/* Content */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 lg:px-8">
-            {/* Icon Back - Desktop */}
             <div className="hidden sm:block mb-6">
               <Link href="/">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-[#3650A2] hover:bg-[#385CBD] text-white font-bold rounded-full transition duration-300">
-                  <Image
-                    src="/icon-back.png"
-                    alt="back"
-                    width={10}
-                    height={10}
-                    className="max-w-full h-auto"
-                  />
+                  <Image src="/icon-back.png" alt="back" width={10} height={10} className="max-w-full h-auto" />
                 </div>
               </Link>
             </div>
@@ -93,40 +68,23 @@ const LoginPage: React.FC = () => {
               Makin Aman <br /> Bersama <span className="text-[#3650A2]">SiJaga</span>
             </h1>
             <div className="hidden md:block mt-4">
-              <Image
-                src="/Gambar Locker.png"
-                alt="Safe Illustration"
-                width={400}
-                height={400}
-                className="max-w-full h-auto"
-              />
+              <Image src="/Gambar Locker.png" alt="Safe Illustration" width={400} height={400} className="max-w-full h-auto" />
             </div>
           </div>
         </div>
-
-        {/* Right Section */}
         <div className="md:w-1/2 w-full flex justify-center md:justify-start ml-4">
           <div className="bg-[#3650A2] text-white rounded-2xl shadow-lg overflow-hidden p-10 lg:p-12 max-w-[500px] w-full min-w-[300px]">
             <div className="flex flex-col items-center mb-6">
-              <Image
-                src="/logo sijaga white.png"
-                alt="SiJaga Logo"
-                width={100}
-                height={100}
-                className="w-24 h-auto md:w-28"
-              />
+              <Image src="/logo sijaga white.png" alt="SiJaga Logo" width={100} height={100} className="w-24 h-auto md:w-28" />
               <h2 className="text-xl md:text-2xl text-center font-bold mt-6">Masuk</h2>
               <p className="text-sm mt-2 text-blue-100 text-center">
                 Barang berharga terlindungi, SiJaga selalu di hati
               </p>
             </div>
-
+            {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-white"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-white">
                   Email
                 </label>
                 <input
@@ -139,10 +97,7 @@ const LoginPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-white"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-white">
                   Kata Sandi
                 </label>
                 <div className="relative">
@@ -171,9 +126,19 @@ const LoginPage: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full bg-[#FFE492] text-[#3650A2] font-semibold py-2 rounded-xl shadow-md hover:bg-yellow-400 transition flex items-center justify-center"
+                  className={`w-full bg-[#FFE492] text-[#3650A2] font-semibold py-2 rounded-xl shadow-md transition flex items-center justify-center ${
+                    loading ? "opacity-50 cursor-not-allowed" : "hover:bg-yellow-400"
+                  }`}
+                  disabled={loading}
                 >
-                  Masuk
+                  {loading ? (
+                    <div className="flex items-center">
+                      <span className="loader rounded-full h-4 w-4 border-t-2 border-[#3650A2] mr-2 animate-spin"></span>
+                      Memproses...
+                    </div>
+                  ) : (
+                    "Masuk"
+                  )}
                 </button>
               </div>
             </form>

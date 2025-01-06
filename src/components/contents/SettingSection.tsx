@@ -1,34 +1,36 @@
 "use client";
 
-import React, { useState, useEffect,useRef } from 'react';
-import Image from 'next/image';
-import axios from 'axios';
-import {io, Socket} from 'socket.io-client';
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import axios from "axios";
+import { io, Socket } from "socket.io-client";
 
 interface SettingSectionProps {
   isRegistered: boolean;
   onRegisterSuccess: () => void;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+interface CardIdResponse {
+  card_id: string;
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const CARD_API_URL = `${API_BASE_URL}/card-id/latest`;
 const REGISTER_API_URL = `${API_BASE_URL}/user/register`;
 
 const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegisterSuccess }) => {
   const [zoomOut, setZoomOut] = useState(false);
   const [currentImage, setCurrentImage] = useState<string>(
-    isRegistered ? '/scanimage-success.png' : '/scanimage.png'
+    isRegistered ? "/scanimage-success.png" : "/scanimage.png"
   );
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cardId, setCardId] = useState<string | null>(null);
-  const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
-  const [isRegistering, setIsRegistering] = useState(false);
   const socketRef = useRef<Socket | null>(null);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -38,123 +40,94 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       console.error("API_BASE_URL tidak terdefinisi");
       return;
     }
+
     const socket = io(API_BASE_URL, {
-      transports: ["websocket", "polling"], // Menggunakan metode transport websocket & polling
-      withCredentials: true,               // Izinkan cookie & CORS
-      
+      transports: ["websocket", "polling"],
+      withCredentials: true,
     });
 
-    // Simpan socket ke dalam ref
     socketRef.current = socket;
 
-    // Event handler ketika socket berhasil terhubung
     socket.on("connect", () => {
-      setSocketStatus("Connected");
       console.log("WebSocket connected!");
     });
 
-    socket.on("cardIdDump_latest", (data: any) => {
-      console.log("Card scanned:", data);
-
-      // Validasi data sebelum diatur ke state
-      if (data && data.card_id) {
+    socket.on("cardIdDump_latest", (data: CardIdResponse) => {
+      if (data?.card_id) {
         setCardId(data.card_id);
       } else {
         console.error("Data card-scanned tidak valid:", data);
       }
     });
 
-    // Event handler untuk error
     socket.on("error", (err) => {
       console.error("WebSocket error:", err);
     });
 
-    // Cleanup function saat komponen di-unmount
     return () => {
-      if (socketRef.current) {
-        socket.off("cardIdDump_latest"); 
-        socket.disconnect();      
-        console.log("Socket disconnected.");
-      }
+      socket.off("cardIdDump_latest");
+      socket.disconnect();
     };
   }, []);
 
   const handleRegisterSuccess = () => {
-    setCurrentImage('/scanimage-success.png');
+    setCurrentImage("/scanimage-success.png");
     setZoomOut(true);
-  
-    // Reset form state
-    setName('');
-    setEmail('');
-    setPassword('');
+
+    setName("");
+    setEmail("");
+    setPassword("");
     setConfirm(false);
     setCardId(null);
-  
+
     setTimeout(() => {
       setZoomOut(false);
     }, 5000);
+
     onRegisterSuccess();
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    
-  
+
     if (!cardId) {
-      setError('Card ID tidak ditemukan. Harap coba lagi.');
+      setError("Card ID tidak ditemukan. Harap coba lagi.");
       return;
     }
-  
-    if (!name && !email && !password) {
-      setError('Isi Kredensial yang dibutuhkan dengan benar.');
+
+    if (!name || !email || !password) {
+      setError("Isi Kredensial yang dibutuhkan dengan benar.");
       return;
     }
-     if (!name) {
-      setError('Isi Nama yang ingin didaftarkan');
-      return;
-     }
-     if (!email) {
-      setError('Isi Email yang ingin didaftarkan');
-      return;
-     }
-     if (!password) {
-      setError('Isi Password yang ingin didaftarkan');
-      return;
-     }
+
     if (!confirm) {
-      setError('Harap konfirmasi untuk melanjutkan.');
+      setError("Harap konfirmasi untuk melanjutkan.");
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       const data = { name, email, card_id: cardId, password };
-    
       const response = await axios.post(REGISTER_API_URL, data);
-    
-      console.log('Response:', response.data);
-    
+
+      console.log("Response:", response.data);
+
       handleRegisterSuccess();
-    } catch (error: any) {
-      console.error('Error Detail:', error);
-    
-      if (error.response?.data?.message) {
-        if (error.response.data.message.includes("UID sudah terdaftar")) {
-          setError("UID sudah terdaftar. Harap gunakan kartu lain.");
-        } else {
-          setError(error.response.data.message);
-        }
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        const errorMessage = err.response.data.message.includes("UID sudah terdaftar")
+          ? "UID sudah terdaftar. Harap gunakan kartu lain."
+          : err.response.data.message;
+        setError(errorMessage);
       } else {
-        setError('Pendaftaran gagal. Coba lagi.');
+        setError("Pendaftaran gagal. Coba lagi.");
       }
     } finally {
       setLoading(false);
     }
   };
-  
 
   const fetchCardId = async () => {
     try {
@@ -167,11 +140,10 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         setCardId(cardIdFromApi);
       } else {
         setError("Card ID tidak ditemukan dalam respons API.");
-        console.error("Card ID missing in API response:", response?.data);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error fetching Card ID:", err);
-      setError(err.response?.data?.message || "Gagal mengambil Card ID");
+      setError("Gagal mengambil Card ID");
     } finally {
       setLoading(false);
     }
@@ -199,9 +171,11 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
 
           <div className={`w-60 h-60 md:w-70 md:h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
-            <img
+            <Image
               src={currentImage}
               alt="Scan Icon"
+              width={900}
+              height={900}
               className="w-70 h-70 object-contain animate-zoom overflow-hidden"
             />
           </div>
@@ -289,11 +263,11 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
             <button
               type="submit"
               className={`w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-all duration-300 ${
-                isRegistering ? 'opacity-50 cursor-not-allowed' : ''
+                isRegistered ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              disabled={loading || isRegistering}
+              disabled={loading || isRegistered}
             >
-              {isRegistering ? (
+              {isRegistered ? (
                 <div className="flex items-center justify-center space-x-2">
                   <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
                   <span>Mendaftarkan...</span>
