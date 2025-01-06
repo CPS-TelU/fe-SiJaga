@@ -39,9 +39,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     const socket = io(API_BASE_URL, {
       transports: ["websocket", "polling"], // Menggunakan metode transport websocket & polling
       withCredentials: true,               // Izinkan cookie & CORS
-      reconnection: true,                  // Aktifkan reconnection otomatis
-      reconnectionAttempts: 5,             // Batasi upaya reconnection
-      timeout: 20000,                      // Waktu tunggu koneksi
     });
 
     // Simpan socket ke dalam ref
@@ -49,27 +46,25 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 
     // Event handler ketika socket berhasil terhubung
     socket.on("connect", () => {
-      setSocketStatus("Connected");
-      console.log("WebSocket connected!");
+      console.log("Connected to Socket.IO server");
     });
 
     // Event handler ketika socket terputus
     socket.on("disconnect", () => {
-      setSocketStatus("Disconnected");
       console.log("WebSocket disconnected!");
     });
 
     // Event handler untuk card-scanned
     socket.on("cardIdDump_latest", (data: any) => {
+      setCardId(data.card_id);
       console.log("Card scanned:", data);
-
-      // Validasi data sebelum diatur ke state
       if (data && data.card_id) {
         setCardId(data.card_id);
+        console.log("Card ID:", data.card_id);
       } else {
         console.error("Data card-scanned tidak valid:", data);
       }
-    });
+    });    
 
     // Event handler untuk error
     socket.on("error", (err) => {
@@ -79,7 +74,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     // Cleanup function saat komponen di-unmount
     return () => {
       if (socketRef.current) {
-        socket.off("card-scanned"); // Lepas listener "card-scanned"
+        socket.off("cardIdDump_latest"); // Lepas listener "card-scanned"
         socket.disconnect();       // Putuskan koneksi
         console.log("Socket disconnected.");
       }
@@ -105,8 +100,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    
   
     if (!cardId) {
       setError('Card ID tidak ditemukan. Harap coba lagi.');
@@ -153,7 +146,12 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
-      setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
+
+      if (error.response?.data?.message) {
+        setError("UID sudah terdaftar");
+      } else {
+        ;setError(error.response.data.message);
+      }
     } finally {
       setLoading(false);
     }
