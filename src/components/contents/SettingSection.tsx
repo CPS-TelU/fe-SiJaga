@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import {io, Socket} from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 
 interface SettingSectionProps {
   isRegistered: boolean;
@@ -28,69 +29,115 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [error, setError] = useState<string | null>(null);
   const [cardId, setCardId] = useState<string | null>(null);
   const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
+  const [isRegistering, setIsRegistering] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
+    if (!API_BASE_URL) {
+      console.error("API_BASE_URL tidak terdefinisi");
+      return;
+    }
     const socket = io(API_BASE_URL, {
-      transports: ['websocket', 'polling'], // Tambahkan kedua metode transport
+      transports: ["websocket", "polling"], // Menggunakan metode transport websocket & polling
       withCredentials: true,               // Izinkan cookie & CORS
+      reconnection: true,                  // Aktifkan reconnection otomatis
+      reconnectionAttempts: 5,             // Batasi upaya reconnection
+      timeout: 20000,                      // Waktu tunggu koneksi
     });
 
+    // Simpan socket ke dalam ref
     socketRef.current = socket;
-  
-    socket.on('connect', () => {
-      console.log('Connected to Socket.IO server');
+
+    // Event handler ketika socket berhasil terhubung
+    socket.on("connect", () => {
+      setSocketStatus("Connected");
+      console.log("WebSocket connected!");
     });
-  
-    socket.on('usageHistory_update', (data: any) => {
-      console.log('Data received from usegeHistory_update:', data);
+
+    // Event handler ketika socket terputus
+    socket.on("disconnect", () => {
+      setSocketStatus("Disconnected");
+      console.log("WebSocket disconnected!");
     });
-  
-    socket.on('card-scanned', (data) => {
-      console.log('Card scanned:', data);
-      setCardId(data.card_id);
+
+    // Event handler untuk card-scanned
+    socket.on("cardIdDump_latest", (data: any) => {
+      console.log("Card scanned:", data);
+
+      // Validasi data sebelum diatur ke state
+      if (data && data.card_id) {
+        setCardId(data.card_id);
+      } else {
+        console.error("Data card-scanned tidak valid:", data);
+      }
     });
-  
-    socket.on('error', (err) => {
-      console.error('WebSocket error:', err);
+
+    // Event handler untuk error
+    socket.on("error", (err) => {
+      console.error("WebSocket error:", err);
     });
-  
+
+    // Cleanup function saat komponen di-unmount
     return () => {
-      socket.disconnect(); // Pastikan koneksi ditutup saat komponen unmount
+      if (socketRef.current) {
+        socket.off("card-scanned"); // Lepas listener "card-scanned"
+        socket.disconnect();       // Putuskan koneksi
+        console.log("Socket disconnected.");
+      }
     };
   }, []);  
 
   const handleRegisterSuccess = () => {
     setCurrentImage('/scanimage-success.png');
     setZoomOut(true);
+  
+    // Reset form state
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirm(false);
+    setCardId(null);
+  
     setTimeout(() => {
       setZoomOut(false);
     }, 5000);
     onRegisterSuccess();
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!confirm) {
-      setError('Harap konfirmasi untuk melanjutkan.');
-      return;
-    }
-
+  
+    
+  
     if (!cardId) {
       setError('Card ID tidak ditemukan. Harap coba lagi.');
       return;
     }
-
-    if (!name || !email || !password) {
-      setError('Nama, Email, dan Password harus diisi.');
+  
+    if (!name && !email && !password) {
+      setError('Isi Kredensial yang dibutuhkan dengan benar.');
       return;
     }
-
+     if (!name) {
+      setError('Isi Nama yang ingin didaftarkan');
+      return;
+     }
+     if (!email) {
+      setError('Isi Email yang ingin didaftarkan');
+      return;
+     }
+     if (!password) {
+      setError('Isi Password yang ingin didaftarkan');
+      return;
+     }
+    if (!confirm) {
+      setError('Harap konfirmasi untuk melanjutkan.');
+      return;
+    }
+  
     setLoading(true);
     setError(null);
-    setError(null);
-
+  
     try {
       const data = {
         name,
@@ -98,11 +145,12 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
         card_id: cardId,
         password,
       };
-
+  
       const response = await axios.post(REGISTER_API_URL, data);
-
+  
       console.log('Response:', response.data);
-
+  
+      // Panggil fungsi untuk menangani keberhasilan pendaftaran
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
@@ -111,6 +159,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       setLoading(false);
     }
   };
+  
 
   const fetchCardId = async () => {
     try {
@@ -229,11 +278,23 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
             </div>
             <button
               type="submit"
-              className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
-              disabled={loading}
+              className={`w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-all duration-300 ${
+                isRegistering ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading || isRegistering}
             >
-              {loading ? 'Memproses...' : 'Daftar'}
+              {isRegistering ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
+                  <span>Mendaftarkan...</span>
+                </div>
+              ) : loading ? (
+                "Memproses..."
+              ) : (
+                "Daftar"
+              )}
             </button>
+
           </form>
         </div>
       </div>

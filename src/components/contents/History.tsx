@@ -14,6 +14,7 @@ interface HistoryItem {
   status: string;
   card_id: string;
   availStatus: string;
+  availStatus: string;
 }
 
 const History = () => {
@@ -31,7 +32,7 @@ const History = () => {
   const [isConditionDropdownOpen, setIsConditionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const socketRef = useRef<Socket | null>(null);
-  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
+  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
 
   // Fetch user profile
   useEffect(() => {
@@ -121,21 +122,52 @@ const History = () => {
   // Set up WebSocket connection
   useEffect(() => {
     const socket = io(URL, {
-      transports: ["polling"],
+      transports: ["websocket", "polling"], // Prioritaskan websocket
       withCredentials: true,
     });
-
+  
     socketRef.current = socket;
+  
+    // Log saat berhasil terhubung
     socket.on("connect", () => {
-      console.log("Connected to the server");
+      console.log("Connected to Socket.IO server");
     });
-
+  
+    // Dengarkan event real-time dari server
+    socket.on("usageHistory_update", (newData: HistoryItem) => {
+      console.log("New real-time data received:", newData);
+  
+      // Pastikan ID unik sebelum menambahkannya ke history
+      setHistoryData((prevHistory) => {
+        if (!prevHistory.some(item => item.id === newData.id)) {
+          return [newData, ...prevHistory];  // Hanya tambah jika ID belum ada
+        }
+        return prevHistory; // Tidak tambah jika ID sudah ada
+      });
+  
+      setFilteredHistoryData((prevFiltered) => {
+        if (!prevFiltered.some(item => item.id === newData.id)) {
+          return [newData, ...prevFiltered];  // Hanya tambah jika ID belum ada
+        }
+        return prevFiltered; // Tidak tambah jika ID sudah ada
+      });
+    });
+  
+    // Tangani error koneksi
+    socket.on("connect_error", (error) => {
+      console.error("Socket.IO connection error:", error);
+    });
+  
+    // Bersihkan koneksi saat komponen dilepas
     return () => {
+      socket.off("usageHistory_update");
       socket.disconnect();
     };
   }, []);
+  
+  
 
-  // Filter data saat pencarian diubah
+  
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredHistoryData(historyData); // Tampilkan semua data jika query kosong
@@ -193,10 +225,10 @@ const History = () => {
       }
   
       // Filter berdasarkan kondisi
-      if (selectedCondition === "Active" || value === "Active") {
-        filteredData = filteredData.filter((item) => item.status === "active");
-      } else if (selectedCondition === "Inactive" || value === "Inactive") {
-        filteredData = filteredData.filter((item) => item.status === "inactive");
+      if (selectedCondition === "ACTIVE" || value === "ACTIVE") {
+        filteredData = filteredData.filter((item) => item.status === "ACTIVE");
+      } else if (selectedCondition === "INACTIVE" || value === "INACTIVE") {
+        filteredData = filteredData.filter((item) => item.status === "INACTIVE");
       }
   
       // Tampilkan semua data jika filter direset
@@ -217,24 +249,24 @@ const History = () => {
             <div className="hidden lg:flex flex-col items-center gap-2">
               <Image src="/Logo sijaga.png" alt="Logo SiJaga" width={100} height={100} />
             </div>
-            <div className="flex items-center gap-3 ml-auto w-full justify-end">
-              <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
+            <div className="flex items-center gap-3">
+              <div className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
                 {profileName || "Memuat..."}
               </div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <Image
-                  src="/human.png"
-                  alt="User Icon"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
+              <div className="rounded-full flex items-center justify-center">
+              <Image
+                src="/human.png"
+                alt="Profile Icon"
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
               </div>
             </div>
-            </div>
+          </div>
 
           {/* Search & Filter */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 mb-10 max-h-[550px]">
+          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 lg:max-h-[500px] xl:min-h-[500px]">
             <p className="text-2xl font-bold text-[#3650A2] pb-4">History</p>
             <div className="relative mb-6">
               <input
@@ -296,13 +328,13 @@ const History = () => {
                     <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
                       <ul className="py-2">
                         <li
-                          onClick={() => handleSelection("Active", "condition")}
+                          onClick={() => handleSelection("ACTIVE", "condition")}
                           className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
                         >
                           Active
                         </li>
                         <li
-                          onClick={() => handleSelection("Inactive", "condition")}
+                          onClick={() => handleSelection("INACTIVE", "condition")}
                           className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
                         >
                           Inactive
@@ -345,9 +377,7 @@ const History = () => {
                         <td className="py-3">{item.name}</td>
                         <td
                           className={`${
-                            item.status === "active" || item.status === "ACTIVE" || item.status === "Active" 
-                              ? "text-green-500" 
-                              : "text-red-500"
+                            item.status === "active" || item.status === "ACTIVE" || item.status === "Active" ? "text-green-500" : "text-red-500"
                           } py-3 font-semibold`}
                         >
                           {item.status.toUpperCase()}

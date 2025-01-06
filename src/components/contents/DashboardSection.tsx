@@ -63,63 +63,49 @@ const DashboardSection = () => {
   };
 
   useEffect(() => {
-    const socketHistory = io(HISTORY_LATEST_URL, {
-      transports: ["websocket", "polling"], // Improved transport options
+    const socket = io(API_BASE_URL, {
+      transports: ["websocket", "polling"],
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,
       timeout: 20000,
     });
-
-    const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL, {
-      transports: ["websocket", "polling"], // Improved transport options
-      withCredentials: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      timeout: 20000,
+  
+    socketRef.current = socket;
+  
+    // Event handler ketika socket berhasil terhubung
+    socket.on("connect", () => {
+      console.log("Connected to Socket.io URL");
     });
-
-    socketHistory.on("connect", () => {
-      console.log("Connected to HISTORY_LATEST_URL");
+  
+    // Event handler untuk update history
+    socket.on("usageHistory_update", (data: any) => {
+      console.log("Data received from usageHistory_update:", data);
+  
+      // Validasi data sebelum diatur ke state
+      if (data && data.name && data.Timestamp && data.status && data.card_id) {
+        setLastUser({
+          id: data.id || null,
+          name: data.name || "Tidak diketahui",
+          timestamp: data.Timestamp || "",
+          status: data.status || "",
+          cardId: data.card_id || "",
+        });
+      } else {
+        console.error("Data yang diterima dari usageHistory_update tidak valid.");
+      }
     });
-
-    socketBoxStatus.on("connect", () => {
-      console.log("Connected to HISTORY_LATEST_BOX_STATUS_URL");
-    });
-
-    socketHistory.on("latestUsageHistory", (data) => {
-      setLastUser({
-        id: data.id || null,
-        name: data.name || "Tidak ditemukan",
-        timestamp: data.Timestamp || "",
-        status: data.status || "",
-        cardId: data.card_id || "",
-      });
-    });
-
-    socketBoxStatus.on("latestBoxStatus", (data) => {
-      setAvailableStatus(data.status || "Tidak tersedia");
-    });
-
-    socketHistory.on("error", (err) => {
-      console.error("WebSocket error in HISTORY_LATEST_URL:", err);
-      setError("Error in WebSocket connection for History.");
-    });
-
-    socketBoxStatus.on("error", (err) => {
-      console.error("WebSocket error in HISTORY_LATEST_BOX_STATUS_URL:", err);
-      setError("Error in WebSocket connection for Box Status.");
-    });
-
-    // Assign socket reference
-    socketRef.current = socketHistory;
-
+  
+    // Cleanup function saat komponen di-unmount
     return () => {
-      socketHistory.disconnect();
-      socketBoxStatus.disconnect();
+      if (socketRef.current) {
+        socket.off("usageHistory_update");
+        socket.disconnect();
+        console.log("Socket disconnected.");
+      }
     };
   }, []);
-
+  
   const fetchLastUser = async () => {
     setLoading(true);
     setError("");
@@ -318,7 +304,7 @@ const DashboardSection = () => {
               {/* Card 3: Kondisi SiJaga */}
               <div
                 className={`${
-                  lastUser.status === "active" ? "bg-[#59DFB5]" : "bg-[#FF4B69]"
+                  lastUser.status === "ACTIVE" || lastUser.status === "active" || lastUser.status === "Active"? "bg-[#59DFB5]" : "bg-[#FF4B69]"
                 } text-white rounded-3xl p-4 shadow-lg flex items-center space-x-4`}
               >
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
