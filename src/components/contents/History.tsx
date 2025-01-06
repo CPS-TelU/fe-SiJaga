@@ -13,6 +13,7 @@ interface HistoryItem {
   name: string;
   status: string;
   card_id: string;
+  availStatus: string;
 }
 
 const History = () => {
@@ -379,12 +380,12 @@ const History = () => {
                         <td className="py-3">{item.name}</td>
                         <td
                           className={`${
-                            item.status === "active" ? "text-green-500" : "text-red-500"
+                            item.status === "ACTIVE" ? "text-green-500" : "text-red-500"
                           } py-3 font-semibold`}
                         >
                           {item.status.toUpperCase()}
                         </td>
-                        <td className="py-3">{item.card_id}</td>
+                        <td className="py-3">{item.availStatus}</td>
                       </tr>
                     ))}
                   </tbody>

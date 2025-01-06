@@ -10,7 +10,6 @@ const HISTORY_LATEST_URL = `${API_BASE_URL}/history/latest`;
 const HISTORY_LATEST_BOX_STATUS_URL = `${API_BASE_URL}/history/latest-box-status`;
 const USER_PROFILE_URL = `${API_BASE_URL}/user-ess/whoami`;
 
-
 const DashboardSection = () => {
   const socketRef = useRef<Socket | null>(null);
   const [lastUser, setLastUser] = useState({
@@ -62,21 +61,28 @@ const DashboardSection = () => {
     }
   };
 
+  // WebSocket implementation for real-time updates
   useEffect(() => {
-    const socketHistory = io(HISTORY_LATEST_URL, {
+    const socketHistory = io(HISTORY_LATEST_URL.replace("https", "wss"), {
       transports: ["websocket", "polling"], // Improved transport options
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,
       timeout: 20000,
+      auth: {
+        token: Cookies.get("token"), // Ensure token is passed for authentication
+      },
     });
 
-    const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL, {
+    const socketBoxStatus = io(HISTORY_LATEST_BOX_STATUS_URL.replace("https", "wss"), {
       transports: ["websocket", "polling"], // Improved transport options
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,
       timeout: 20000,
+      auth: {
+        token: Cookies.get("token"), // Ensure token is passed for authentication
+      },
     });
 
     socketHistory.on("connect", () => {
@@ -86,6 +92,7 @@ const DashboardSection = () => {
     socketBoxStatus.on("connect", () => {
       console.log("Connected to HISTORY_LATEST_BOX_STATUS_URL");
     });
+    
 
     socketHistory.on("latestUsageHistory", (data) => {
       setLastUser({
@@ -118,7 +125,7 @@ const DashboardSection = () => {
       socketHistory.disconnect();
       socketBoxStatus.disconnect();
     };
-  }, []);
+  }, []); // Empty dependency array to run only once on mount
 
   const fetchLastUser = async () => {
     setLoading(true);
@@ -174,13 +181,13 @@ const DashboardSection = () => {
     setError("");
     const token = Cookies.get("token");
     const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/availability/get-latest`;
-  
+
     if (!token) {
       setError("Token tidak ditemukan. Silakan login kembali.");
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -189,20 +196,20 @@ const DashboardSection = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error(
           `Gagal mengambil data: ${response.status} - ${response.statusText}`
         );
       }
-  
+
       const responseData = await response.json();
       if (responseData.status && responseData.data) {
         const { status } = responseData.data;
-  
+
         // Simpan data ke dalam state
         setAvailableStatus(status);
-        
+
       } else {
         throw new Error("Data yang diterima tidak valid.");
       }
@@ -214,11 +221,11 @@ const DashboardSection = () => {
     }
   };
 
- useEffect(() => {
-  fetchUserProfile();
-  fetchLastUser();
-  fetchAvailable();
-}, []);
+  useEffect(() => {
+    fetchUserProfile();
+    fetchLastUser();
+    fetchAvailable();
+  }, []);
 
   return (
     <div
@@ -318,7 +325,7 @@ const DashboardSection = () => {
               {/* Card 3: Kondisi SiJaga */}
               <div
                 className={`${
-                  lastUser.status === "active" ? "bg-[#59DFB5]" : "bg-[#FF4B69]"
+                  lastUser.status === "ACTIVE" ? "bg-[#59DFB5] " : "bg-[#FF4B69]"
                 } text-white rounded-3xl p-4 shadow-lg flex items-center space-x-4`}
               >
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
