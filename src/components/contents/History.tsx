@@ -108,7 +108,8 @@ const History = () => {
         } else {
           throw new Error("Data yang diterima tidak valid.");
         }
-      } catch (error) {
+      } catch (err) {
+        console.error(err); // Optional: Log the error for debugging
         setError("Gagal memuat data history.");
       } finally {
         setLoading(false);
