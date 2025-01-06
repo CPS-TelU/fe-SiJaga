@@ -1,13 +1,18 @@
-
-"use client";
-
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-
-import { jakarta } from "@/styles/fonts";
 import Cookies from "js-cookie";
+import { jakarta } from "@/styles/fonts";
+import { io, Socket } from "socket.io-client";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const HISTORY_LATEST_URL = `${API_BASE_URL}/history/latest`;
+const HISTORY_LATEST_BOX_STATUS_URL = `${API_BASE_URL}/history/latest-box-status`;
+const USER_PROFILE_URL = `${API_BASE_URL}/user-ess/whoami`;
+
 
 const DashboardSection = () => {
+  const socketRef = useRef<Socket | null>(null);
   const [lastUser, setLastUser] = useState({
     id: null,
     name: "Memuat...",
@@ -57,6 +62,47 @@ const DashboardSection = () => {
     }
   };
 
+  useEffect(() => {
+    const socket = io(API_BASE_URL, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+    });
+  
+    socketRef.current = socket;
+  
+    // Event handler ketika socket berhasil terhubung
+    socket.on("connect", () => {
+      console.log("Connected to Socket.io URL");
+    });
+  
+    // Event handler untuk update history
+    socket.on("usageHistory_update", (data: any) => {
+      console.log("Data received from usageHistory_update:", data);
+  
+      // Validasi data sebelum diatur ke state
+      if (data && data.name && data.Timestamp && data.status && data.card_id) {
+        setLastUser({
+          id: data.id || null,
+          name: data.name || "Tidak diketahui",
+          timestamp: data.Timestamp || "",
+          status: data.status || "",
+          cardId: data.card_id || "",
+        });
+      } else {
+        console.error("Data yang diterima dari usageHistory_update tidak valid.");
+      }
+    });
+  
+    // Cleanup function saat komponen di-unmount
+    return () => {
+      if (socketRef.current) {
+        socket.off("usageHistory_update");
+        socket.disconnect();
+        console.log("Socket disconnected.");
+      }
+    };
+  }, []);
+  
   const fetchLastUser = async () => {
     setLoading(true);
     setError("");
@@ -159,31 +205,32 @@ const DashboardSection = () => {
 
   return (
     <div
-    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-32 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
+    className={`${jakarta.className} flex-1 py-6 px-4 sm:py-8 sm:px-6 lg:py-16 lg:-translate-y-12 lg:px-8 bg-cover bg-center justify-center items-center lg:ml-24`}
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 max-w-[1200px] mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 sm:mb-8 max-w-[1200px] mx-auto">
         {/* Logo dan Dashboard */}
-        <div className="flex items-center">
+        <div className="hidden lg:flex items-center">
           <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
           <h1 className="text-lg sm:text-xl  font-bold text-blue">Dashboard</h1>
         </div>
 
-        {/* Profil */}
-        <div className="flex items-center space-x-2 mt-4 sm:mt-0 ml-auto sm:ml-12">
-          <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
-            {profileName || "Memuat..."}
-          </span>
-          <div className=" rounded-full flex items-center justify-center">
-            <Image
-              src="/human.png"
-              alt="User Icon"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          </div>
-        </div>
+      {/* Profil */}
+<div className="flex items-center space-x-2 mt-0 sm:mt-0 ml-auto w-full justify-end lg:ml-0">
+  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+    {profileName || "Memuat..."}
+  </span>
+  <div className="rounded-full flex items-center justify-center">
+    <Image
+      src="/human.png"
+      alt="User Icon"
+      width={40}
+      height={40}
+      className="rounded-full"
+    />
+  </div>
+</div>
+
 
 
       </div>
@@ -260,7 +307,7 @@ const DashboardSection = () => {
               {/* Card 3: Kondisi SiJaga */}
               <div
                 className={`${
-                  lastUser.status === "active" ? "bg-[#59DFB5]" : "bg-[#FF4B69]"
+                  lastUser.status === "ACTIVE" || lastUser.status === "active" || lastUser.status === "Active"? "bg-[#59DFB5]" : "bg-[#FF4B69]"
                 } text-white rounded-3xl p-4 shadow-lg flex items-center space-x-4`}
               >
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">

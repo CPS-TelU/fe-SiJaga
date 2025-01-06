@@ -1,14 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
-import io from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 
 interface SettingSectionProps {
   isRegistered: boolean;
   onRegisterSuccess: () => void;
 }
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const CARD_API_URL = `${API_BASE_URL}/card-id/latest`;
+const REGISTER_API_URL = `${API_BASE_URL}/user/register`;
 
 const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegisterSuccess }) => {
   const [zoomOut, setZoomOut] = useState(false);
@@ -24,131 +28,164 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [error, setError] = useState<string | null>(null);
   const [cardId, setCardId] = useState<string | null>(null);
   const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
-    const socket = io('https://sijaga-be.vercel.app/', {
-      transports: ['polling', 'websocket'], // Sesuaikan transport backend
+    if (!API_BASE_URL) {
+      console.error("API_BASE_URL tidak terdefinisi");
+      return;
+    }
+    const socket = io(API_BASE_URL, {
+      transports: ["websocket", "polling"], // Menggunakan metode transport websocket & polling
+      withCredentials: true,               // Izinkan cookie & CORS
+      
     });
 
-    // Event handler ketika koneksi berhasil
-    socket.on('connect', () => {
-      setSocketStatus('Connected');
+    // Simpan socket ke dalam ref
+    socketRef.current = socket;
+
+    // Event handler ketika socket berhasil terhubung
+    socket.on("connect", () => {
+      setSocketStatus("Connected");
+      console.log("WebSocket connected!");
     });
 
-    // Event handler ketika koneksi terputus
-    socket.on('disconnect', () => {
-      setSocketStatus('Disconnected');
+    socket.on("cardIdDump_latest", (data: any) => {
+      console.log("Card scanned:", data);
+
+      // Validasi data sebelum diatur ke state
+      if (data && data.card_id) {
+        setCardId(data.card_id);
+      } else {
+        console.error("Data card-scanned tidak valid:", data);
+      }
     });
 
-    // Menerima pesan dari server
-    socket.on('message', (data: any) => {
-      console.log('Pesan dari server:', data);
+    // Event handler untuk error
+    socket.on("error", (err) => {
+      console.error("WebSocket error:", err);
     });
 
-    // Error handler
-    socket.on('error', (err: any) => {
-      console.error('Socket.IO error:', err);
-    });
-
+    // Cleanup function saat komponen di-unmount
     return () => {
-      socket.disconnect();
+      if (socketRef.current) {
+        socket.off("cardIdDump_latest"); 
+        socket.disconnect();      
+        console.log("Socket disconnected.");
+      }
     };
   }, []);
 
   const handleRegisterSuccess = () => {
     setCurrentImage('/scanimage-success.png');
     setZoomOut(true);
+  
+    // Reset form state
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirm(false);
+    setCardId(null);
+  
     setTimeout(() => {
       setZoomOut(false);
     }, 5000);
     onRegisterSuccess();
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validasi awal
+  
+    
+  
+    if (!cardId) {
+      setError('Card ID tidak ditemukan. Harap coba lagi.');
+      return;
+    }
+  
+    if (!name && !email && !password) {
+      setError('Isi Kredensial yang dibutuhkan dengan benar.');
+      return;
+    }
+     if (!name) {
+      setError('Isi Nama yang ingin didaftarkan');
+      return;
+     }
+     if (!email) {
+      setError('Isi Email yang ingin didaftarkan');
+      return;
+     }
+     if (!password) {
+      setError('Isi Password yang ingin didaftarkan');
+      return;
+     }
     if (!confirm) {
       setError('Harap konfirmasi untuk melanjutkan.');
       return;
     }
-
-    if (!cardId) {
-      console.log('Card ID kosong:', cardId);
-      setError('Card ID tidak ditemukan. Harap coba lagi.');
-      return;
-    }
-
-    if (!name || !email || !password) {
-      console.log('Data tidak lengkap:', { name, email, password });
-      setError('Nama, Email, dan Password harus diisi.');
-      return;
-    }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
-      const data = {
-        name,
-        email,
-        card_id: cardId,
-        password,
-      };
-
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_USER_REGISTER_URL!,
-        data
-      );
-
+      const data = { name, email, card_id: cardId, password };
+    
+      const response = await axios.post(REGISTER_API_URL, data);
+    
       console.log('Response:', response.data);
-
+    
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
-
-      if (error.response) {
-        console.log('Response Error:', error.response.data);
-        setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
+    
+      if (error.response?.data?.message) {
+        if (error.response.data.message.includes("UID sudah terdaftar")) {
+          setError("UID sudah terdaftar. Harap gunakan kartu lain.");
+        } else {
+          setError(error.response.data.message);
+        }
       } else {
-        setError('Terjadi kesalahan, tidak dapat terhubung ke server.');
+        setError('Pendaftaran gagal. Coba lagi.');
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  const fetchCardId = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await axios.get(CARD_API_URL);
+      const cardIdFromApi = response?.data?.data?.card_id;
+      if (cardIdFromApi) {
+        setCardId(cardIdFromApi);
+      } else {
+        setError("Card ID tidak ditemukan dalam respons API.");
+        console.error("Card ID missing in API response:", response?.data);
+      }
+    } catch (err: any) {
+      console.error("Error fetching Card ID:", err);
+      setError(err.response?.data?.message || "Gagal mengambil Card ID");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchCardId = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await axios.get(process.env.NEXT_PUBLIC_CARD_ID_LATEST_URL!);
-        console.log('API Response untuk Card ID:', response?.data);
-
-        const cardIdFromApi = response?.data?.data?.card_id;
-
-        if (cardIdFromApi) {
-          setCardId(cardIdFromApi);
-        } else {
-          setError('Card ID tidak ditemukan dalam respons API.');
-        }
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Gagal mengambil Card ID');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCardId();
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row w-full space-y-4 lg:space-y-6 lg:space-x-3 lg:mt-10 lg:ml-28 xl:ml-0 ">
+    <div className="flex flex-col lg:flex-row w-full space-y-4 lg:space-y-6 lg:space-x-3 lg:mt-10">
       <div className="flex flex-col items-center justify-start w-full lg:w-1/2">
         <div className="text-[#3650A2] flex flex-col items-center">
-          <h1 className="text-xl font-bold text-blue-900 flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
+          <h1 className="hidden text-xl font-bold text-blue-900 lg:flex items-center mb-8 lg:-translate-x-4 lg:-translate-y-[-40px] self-start ml-4 md:ml-6 lg:ml-0">
             <Image
               src="/logo.png"
               alt="Dashboard Icon"
@@ -161,7 +198,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
 
           <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
 
-          <div className={`w-70 h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
+          <div className={`w-60 h-60 md:w-70 md:h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
             <img
               src={currentImage}
               alt="Scan Icon"
@@ -172,18 +209,13 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           <p className="text-center text-black mt-4 lg:translate-y-[80px]">
             Pindai kartu akses yang ingin didaftarkan pada box SiJaga
           </p>
-         
         </div>
       </div>
 
       <div className="w-full lg:w-1/2">
         <div className="bg-white p-6 rounded-lg shadow-md lg:mt-20 lg:mr-20 lg:ml-20 lg:mb-20">
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">
-            Tambahkan Kredensial Kartu Baru
-          </h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Masukkan informasi kartu untuk memberikan akses baru.
-          </p>
+          <h3 className="text-xl font-semibold mb-2 text-gray-800">Tambahkan Kredensial Kartu Baru</h3>
+          <p className="text-sm text-gray-600 mb-4">Masukkan informasi kartu untuk memberikan akses baru.</p>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -205,18 +237,30 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setNameError(false);
+                }}
+                className={`w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                  nameError ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
+              {nameError && <p className="text-red-500 text-sm mt-1">Nama harus diisi.</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailError(false);
+                }}
+                className={`w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                  emailError ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
+              {emailError && <p className="text-red-500 text-sm mt-1">Email harus diisi.</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Password</label>
@@ -224,7 +268,10 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                disabled={!name || !email}
+                className={`w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                  !name || !email ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
             <div className="flex items-center">
@@ -241,10 +288,21 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
             </div>
             <button
               type="submit"
-              className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
-              disabled={loading}
+              className={`w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-all duration-300 ${
+                isRegistering ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={loading || isRegistering}
             >
-              {loading ? 'Memproses...' : 'Daftar'}
+              {isRegistering ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
+                  <span>Mendaftarkan...</span>
+                </div>
+              ) : loading ? (
+                'Memproses...'
+              ) : (
+                'Daftar'
+              )}
             </button>
           </form>
         </div>

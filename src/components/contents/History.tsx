@@ -13,6 +13,7 @@ interface HistoryItem {
   name: string;
   status: string;
   card_id: string;
+  availStatus: string;
 }
 
 const History = () => {
@@ -30,7 +31,7 @@ const History = () => {
   const [isConditionDropdownOpen, setIsConditionDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const socketRef = useRef<Socket | null>(null);
-  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
+  const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
 
   // Fetch user profile
   useEffect(() => {
@@ -119,36 +120,52 @@ const History = () => {
 
   useEffect(() => {
     const socket = io(URL, {
-      transports: ["pooling"],
+      transports: ["websocket", "polling"], // Prioritaskan websocket
       withCredentials: true,
     });
+  
     socketRef.current = socket;
+  
+    // Log saat berhasil terhubung
     socket.on("connect", () => {
-      console.log("Connected to the server");
+      console.log("Connected to Socket.IO server");
     });
-
+  
+    // Dengarkan event real-time dari server
+    socket.on("usageHistory_update", (newData: HistoryItem) => {
+      console.log("New real-time data received:", newData);
+  
+      // Pastikan ID unik sebelum menambahkannya ke history
+      setHistoryData((prevHistory) => {
+        if (!prevHistory.some(item => item.id === newData.id)) {
+          return [newData, ...prevHistory];  // Hanya tambah jika ID belum ada
+        }
+        return prevHistory; // Tidak tambah jika ID sudah ada
+      });
+  
+      setFilteredHistoryData((prevFiltered) => {
+        if (!prevFiltered.some(item => item.id === newData.id)) {
+          return [newData, ...prevFiltered];  // Hanya tambah jika ID belum ada
+        }
+        return prevFiltered; // Tidak tambah jika ID sudah ada
+      });
+    });
+  
+    // Tangani error koneksi
+    socket.on("connect_error", (error) => {
+      console.error("Socket.IO connection error:", error);
+    });
+  
+    // Bersihkan koneksi saat komponen dilepas
     return () => {
+      socket.off("usageHistory_update");
       socket.disconnect();
     };
   }, []);
+  
+  
 
-  // Filter data saat pencarian diubah
-  useEffect(() => {
-    const socket = io(URL, {
-      transports: ["pooling"],
-      withCredentials: true,
-    });
-    socketRef.current = socket;
-    socket.on("connect", () => {
-      console.log("Connected to the server");
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  // Filter data saat pencarian diubah
+  
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredHistoryData(historyData); // Tampilkan semua data jika query kosong
@@ -206,10 +223,10 @@ const History = () => {
       }
   
       // Filter berdasarkan kondisi
-      if (selectedCondition === "Active" || value === "Active") {
-        filteredData = filteredData.filter((item) => item.status === "active");
-      } else if (selectedCondition === "Inactive" || value === "Inactive") {
-        filteredData = filteredData.filter((item) => item.status === "inactive");
+      if (selectedCondition === "ACTIVE" || value === "ACTIVE") {
+        filteredData = filteredData.filter((item) => item.status === "ACTIVE");
+      } else if (selectedCondition === "INACTIVE" || value === "INACTIVE") {
+        filteredData = filteredData.filter((item) => item.status === "INACTIVE");
       }
   
       // Tampilkan semua data jika filter direset
@@ -225,23 +242,24 @@ const History = () => {
   return (
     <div className={`${jakarta.className} mx-auto items-center md:ml-28 lg:translate-y-8`}>
       <div className="max-h-screen flex">
-        <div className="w-full lg:w-4/5 container mx-auto px-4 py-10">
+        <div className="w-full lg:w-4/5 container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-6">
-            <div className="flex flex-col items-center gap-2">
+            <div className="hidden lg:flex flex-col items-center gap-2">
               <Image src="/Logo sijaga.png" alt="Logo SiJaga" width={100} height={100} />
             </div>
             <div className="flex items-center gap-3">
-              <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
+              <div className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
                 {profileName || "Memuat..."}
               </div>
-
+              <div className="rounded-full flex items-center justify-center">
               <Image
                 src="/human.png"
                 alt="Profile Icon"
                 width={40}
                 height={40}
-                className="rounded-full border border-gray-300"
+                className="rounded-full"
               />
+              </div>
             </div>
           </div>
 
@@ -308,13 +326,13 @@ const History = () => {
                     <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
                       <ul className="py-2">
                         <li
-                          onClick={() => handleSelection("Active", "condition")}
+                          onClick={() => handleSelection("ACTIVE", "condition")}
                           className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
                         >
                           Active
                         </li>
                         <li
-                          onClick={() => handleSelection("Inactive", "condition")}
+                          onClick={() => handleSelection("INACTIVE", "condition")}
                           className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
                         >
                           Inactive
@@ -357,12 +375,12 @@ const History = () => {
                         <td className="py-3">{item.name}</td>
                         <td
                           className={`${
-                            item.status === "active" ? "text-green-500" : "text-red-500"
+                            item.status === "active" || item.status === "ACTIVE" || item.status === "Active" ? "text-green-500" : "text-red-500"
                           } py-3 font-semibold`}
                         >
                           {item.status.toUpperCase()}
                         </td>
-                        <td className="py-3">{item.card_id}</td>
+                        <td className="py-3">{item.availStatus}</td>
                       </tr>
                     ))}
                   </tbody>
