@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import {io, Socket} from 'socket.io-client';
-import {io, Socket} from 'socket.io-client';
 
 interface SettingSectionProps {
   isRegistered: boolean;

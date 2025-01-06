@@ -14,7 +14,6 @@ interface HistoryItem {
   status: string;
   card_id: string;
   availStatus: string;
-  availStatus: string;
 }
 
 const History = () => {
