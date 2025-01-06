@@ -12,7 +12,7 @@
             </h1>
             <div className="relative flex justify-start lg:justify-center md:justify-start md:mr-8 lg:ml-2 z-0">
               <Image
-                src="/vector.png"
+                src="/Vector.png"
                 alt="vector"
                 width={372.5}
                 height={30}
