@@ -6,9 +6,6 @@ import { jakarta } from "@/styles/fonts";
 import { io, Socket } from "socket.io-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const HISTORY_LATEST_URL = `${API_BASE_URL}/history/latest`;
-const HISTORY_LATEST_BOX_STATUS_URL = `${API_BASE_URL}/history/latest-box-status`;
-const USER_PROFILE_URL = `${API_BASE_URL}/user-ess/whoami`;
 
 
 const DashboardSection = () => {
@@ -214,7 +211,7 @@ const DashboardSection = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 sm:mb-8 max-w-[1200px] mx-auto">
         {/* Logo dan Dashboard */}
         <div className="hidden lg:flex items-center">
-          <img src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
+          <Image src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
           <h1 className="text-lg sm:text-xl  font-bold text-blue">Dashboard</h1>
         </div>
 
@@ -308,7 +305,7 @@ const DashboardSection = () => {
                 } text-white rounded-3xl p-4 shadow-lg flex items-center space-x-4`}
               >
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
-                  <img
+                  <Image
                     src="/logo-gembok.png"
                     alt="Kondisi SiJaga"
                     width={48}
