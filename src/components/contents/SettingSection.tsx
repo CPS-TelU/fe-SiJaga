@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
-import io from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 
 interface SettingSectionProps {
   isRegistered: boolean;
@@ -28,24 +28,22 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [error, setError] = useState<string | null>(null);
   const [cardId, setCardId] = useState<string | null>(null);
   const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io('https://sijaga-railway-production.up.railway.app', {
+    const socket = io(API_BASE_URL, {
       transports: ['websocket', 'polling'], // Tambahkan kedua metode transport
       withCredentials: true,               // Izinkan cookie & CORS
-      reconnection: true,                  // Aktifkan reconnection otomatis
-      reconnectionAttempts: 5,             // Batasi upaya reconnection
-      timeout: 20000,                      // Waktu tunggu koneksi
     });
+
+    socketRef.current = socket;
   
     socket.on('connect', () => {
-      setSocketStatus('Connected');
-      console.log('WebSocket connected!');
+      console.log('Connected to Socket.IO server');
     });
   
-    socket.on('disconnect', () => {
-      setSocketStatus('Disconnected');
-      console.log('WebSocket disconnected!');
+    socket.on('usageHistory_update', (data: any) => {
+      console.log('Data received from usegeHistory_update:', data);
     });
   
     socket.on('card-scanned', (data) => {

@@ -13,6 +13,7 @@ interface HistoryItem {
   name: string;
   status: string;
   card_id: string;
+  availStatus: string;
 }
 
 const History = () => {
@@ -31,7 +32,6 @@ const History = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/history/all`;
-  const SOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "https://sijaga-railway-production.up.railway.app";
 
   // Fetch user profile
   useEffect(() => {
@@ -118,47 +118,13 @@ const History = () => {
     fetchHistory();
   }, [router]);
 
-  useEffect(() => {
-    const socket = io(SOCKET_URL, {
-      transports: ["websocket", "polling"],
-      withCredentials: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      timeout: 20000,
-    });
-
-    socketRef.current = socket;
-
-    socket.on("connect", () => {
-      console.log("WebSocket connected!");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("WebSocket disconnected!");
-    });
-
-    // Listen for real-time updates
-    socket.on("history-updated", (newHistoryItem: HistoryItem) => {
-      console.log("New history item received:", newHistoryItem);
-      setHistoryData((prevHistory) => [newHistoryItem, ...prevHistory]);
-      setFilteredHistoryData((prevHistory) => [newHistoryItem, ...prevHistory]);
-    });
-
-    socket.on("error", (err) => {
-      console.error("WebSocket error:", err);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  // Filter data saat pencarian diubah
+  // Set up WebSocket connection
   useEffect(() => {
     const socket = io(URL, {
-      transports: ["pooling"],
+      transports: ["polling"],
       withCredentials: true,
     });
+
     socketRef.current = socket;
     socket.on("connect", () => {
       console.log("Connected to the server");
@@ -252,20 +218,20 @@ const History = () => {
               <Image src="/Logo sijaga.png" alt="Logo SiJaga" width={100} height={100} />
             </div>
             <div className="flex items-center gap-3 ml-auto w-full justify-end">
-  <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
-    {profileName || "Memuat..."}
-  </div>
-  <div className="w-8 h-8 rounded-full flex items-center justify-center">
-    <Image
-      src="/human.png"
-      alt="User Icon"
-      width={32}
-      height={32}
-      className="rounded-full"
-    />
-  </div>
-</div>
-</div>
+              <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
+                {profileName || "Memuat..."}
+              </div>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                <Image
+                  src="/human.png"
+                  alt="User Icon"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+              </div>
+            </div>
+            </div>
 
           {/* Search & Filter */}
           <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 mb-10 max-h-[550px]">
@@ -379,12 +345,14 @@ const History = () => {
                         <td className="py-3">{item.name}</td>
                         <td
                           className={`${
-                            item.status === "active" ? "text-green-500" : "text-red-500"
+                            item.status === "active" || item.status === "ACTIVE" || item.status === "Active" 
+                              ? "text-green-500" 
+                              : "text-red-500"
                           } py-3 font-semibold`}
                         >
                           {item.status.toUpperCase()}
                         </td>
-                        <td className="py-3">{item.card_id}</td>
+                        <td className="py-3">{item.availStatus}</td>
                       </tr>
                     ))}
                   </tbody>
