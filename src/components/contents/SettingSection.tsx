@@ -30,6 +30,8 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
   const [socketStatus, setSocketStatus] = useState<'Connected' | 'Disconnected'>('Disconnected');
   const [isRegistering, setIsRegistering] = useState(false);
   const socketRef = useRef<Socket | null>(null);
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
     if (!API_BASE_URL) {
@@ -39,9 +41,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     const socket = io(API_BASE_URL, {
       transports: ["websocket", "polling"], // Menggunakan metode transport websocket & polling
       withCredentials: true,               // Izinkan cookie & CORS
-      reconnection: true,                  // Aktifkan reconnection otomatis
-      reconnectionAttempts: 5,             // Batasi upaya reconnection
-      timeout: 20000,                      // Waktu tunggu koneksi
+      
     });
 
     // Simpan socket ke dalam ref
@@ -53,13 +53,6 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       console.log("WebSocket connected!");
     });
 
-    // Event handler ketika socket terputus
-    socket.on("disconnect", () => {
-      setSocketStatus("Disconnected");
-      console.log("WebSocket disconnected!");
-    });
-
-    // Event handler untuk card-scanned
     socket.on("cardIdDump_latest", (data: any) => {
       console.log("Card scanned:", data);
 
@@ -79,8 +72,8 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     // Cleanup function saat komponen di-unmount
     return () => {
       if (socketRef.current) {
-        socket.off("card-scanned"); // Lepas listener "card-scanned"
-        socket.disconnect();       // Putuskan koneksi
+        socket.off("cardIdDump_latest"); 
+        socket.disconnect();      
         console.log("Socket disconnected.");
       }
     };
@@ -138,22 +131,25 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     setError(null);
   
     try {
-      const data = {
-        name,
-        email,
-        card_id: cardId,
-        password,
-      };
-  
+      const data = { name, email, card_id: cardId, password };
+    
       const response = await axios.post(REGISTER_API_URL, data);
-  
+    
       console.log('Response:', response.data);
-  
-      // Panggil fungsi untuk menangani keberhasilan pendaftaran
+    
       handleRegisterSuccess();
     } catch (error: any) {
       console.error('Error Detail:', error);
-      setError(error.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
+    
+      if (error.response?.data?.message) {
+        if (error.response.data.message.includes("UID sudah terdaftar")) {
+          setError("UID sudah terdaftar. Harap gunakan kartu lain.");
+        } else {
+          setError(error.response.data.message);
+        }
+      } else {
+        setError('Pendaftaran gagal. Coba lagi.');
+      }
     } finally {
       setLoading(false);
     }
@@ -241,18 +237,30 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setNameError(false);
+                }}
+                className={`w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                  nameError ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
+              {nameError && <p className="text-red-500 text-sm mt-1">Nama harus diisi.</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailError(false);
+                }}
+                className={`w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                  emailError ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
+              {emailError && <p className="text-red-500 text-sm mt-1">Email harus diisi.</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Password</label>
@@ -260,7 +268,10 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                disabled={!name || !email}
+                className={`w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                  !name || !email ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
             <div className="flex items-center">
@@ -278,7 +289,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
             <button
               type="submit"
               className={`w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-all duration-300 ${
-                isRegistering ? "opacity-50 cursor-not-allowed" : ""
+                isRegistering ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               disabled={loading || isRegistering}
             >
@@ -288,12 +299,11 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
                   <span>Mendaftarkan...</span>
                 </div>
               ) : loading ? (
-                "Memproses..."
+                'Memproses...'
               ) : (
-                "Daftar"
+                'Daftar'
               )}
             </button>
-
           </form>
         </div>
       </div>
