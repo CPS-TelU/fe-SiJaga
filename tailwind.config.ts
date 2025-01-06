@@ -12,6 +12,18 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      translate: {
+        '-112': '-28rem', // Tambahkan nilai kustom
+      },
+      animation: {
+        zoom: 'zoom 3s ease-in-out infinite',
+      },
+      keyframes: {
+        zoom: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.1)' },
+        },
+      },
     },
   },
   plugins: [],

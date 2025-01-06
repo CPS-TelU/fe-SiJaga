@@ -16,6 +16,7 @@ export default function Footer() {
                                 alt="iconfig"
                                 width={20}
                                 height={20}
+                                className="w-[20px] h-[20px]"
                             />
                             <h1 className="text-xl font-bold">SiJaga</h1>
                         </div>
@@ -32,7 +33,6 @@ export default function Footer() {
                             https://sukapura.digital/
                         </a>
                         <p className="text-sm">
-                            Jl. Sukapura No.54, Sukapura, Kec. Dayeuhkolot, Bandung, Jawa Barat 40267
                         </p>
                         <p className="text-sm">(022) 87523248</p>
                     </div>
