@@ -34,7 +34,7 @@ const StatusCard: React.FC<StatusCardProps> = ({
     } ${color} p-6 rounded-lg shadow-md`}
   >
     {/* Ikon */}
-    <img
+    <Image
     src= {icon} 
     alt={label} 
     className={`p-2 rounded-3xl ${iconSize}`}

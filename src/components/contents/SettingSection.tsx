@@ -199,7 +199,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
           <h2 className="text-3xl font-semibold mb-8 opacity-80 lg:-translate-y-[-40px]">Tambahkan Kartu Baru</h2>
 
           <div className={`w-60 h-60 md:w-70 md:h-70 mb-10 mt-4 lg:translate-y-[80px] ${zoomOut ? 'animate-zoom' : ''}`}>
-            <img
+            <Image
               src={currentImage}
               alt="Scan Icon"
               className="w-70 h-70 object-contain animate-zoom overflow-hidden"

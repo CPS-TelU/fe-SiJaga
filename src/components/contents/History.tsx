@@ -18,7 +18,6 @@ interface HistoryItem {
 
 const History = () => {
   const router = useRouter();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState("Kondisi");
   const [selectedTime, setSelectedTime] = useState("Waktu");
   const [searchQuery, setSearchQuery] = useState("");
