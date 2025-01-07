@@ -13,7 +13,7 @@ const Home = () => {
           </h1>
           <div className="flex justify-center md:justify-start md:mr-32 lg:ml-16">
             <Image
-              src="/vector.png"
+              src="/Vector.png"
               alt="vector"
               width={372.5}
               height={30}

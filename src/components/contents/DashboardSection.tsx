@@ -7,6 +7,13 @@ import { io, Socket } from "socket.io-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+interface UsageHistoryUpdate {
+  id?: null;
+  name: string;
+  Timestamp: string;
+  status: string;
+  card_id: string;
+}
 
 const DashboardSection = () => {
   const socketRef = useRef<Socket | null>(null);
@@ -76,11 +83,11 @@ const DashboardSection = () => {
     });
   
     // Event handler untuk update history
-    socket.on("usageHistory_update", (data: any) => {
+    socket.on("usageHistory_update", (data: UsageHistoryUpdate) => {
       console.log("Data received from usageHistory_update:", data);
-  
-      // Validasi data sebelum diatur ke state
-      if (data && data.name && data.Timestamp && data.status && data.card_id) {
+    
+      // Validate data before setting it to state
+      if (data && data.name && data.Timestamp && data.status && data.card_id && data.id) {
         setLastUser({
           id: data.id || null,
           name: data.name || "Tidak diketahui",
@@ -211,7 +218,12 @@ const DashboardSection = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 sm:mb-8 max-w-[1200px] mx-auto">
         {/* Logo dan Dashboard */}
         <div className="hidden lg:flex items-center">
-          <Image src="/logo.png" alt="Dashboard Icon" className="mr-2 mb-2 w-6 h-6" />
+          <Image 
+          src="/logo.png" 
+          alt="Dashboard Icon" 
+          width={34}
+          height={34}
+          className="mr-2 mb-2 w-6 h-6" />
           <h1 className="text-lg sm:text-xl  font-bold text-blue">Dashboard</h1>
         </div>
 
