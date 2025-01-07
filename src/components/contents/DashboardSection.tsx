@@ -304,7 +304,15 @@ const DashboardSection = () => {
                   <h2 className="text-gray-300 font-medium text-base md:text-lg">
                     Status Barang
                   </h2>
-                  <p className="text-[#02BA80] text-md md:text-2xl font-bold">
+                  <p
+                    className={`text-md md:text-2xl font-bold ${
+                      loading
+                        ? "text-gray-300"
+                        : availableStatus === "ADA BARANG"
+                        ? "text-[#FF4B69]"
+                        : "text-[#59DFB5]"
+                    }`}
+                  >
                     {loading ? "Memuat..." : (availableStatus).toUpperCase() || "Tidak ditemukan"}
                   </p>
                 </div>
@@ -313,7 +321,7 @@ const DashboardSection = () => {
               {/* Card 3: Kondisi SiJaga */}
               <div
                 className={`${
-                  lastUser.status === "ACTIVE" || lastUser.status === "active" || lastUser.status === "Active"? "bg-[#59DFB5]" : "bg-[#FF4B69]"
+                  lastUser.status === "BUKA" || lastUser.status === "buka" || lastUser.status === "Buka"? "bg-[#59DFB5]" : "bg-[#FF4B69]"
                 } text-white rounded-3xl p-4 shadow-lg flex items-center space-x-4`}
               >
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
