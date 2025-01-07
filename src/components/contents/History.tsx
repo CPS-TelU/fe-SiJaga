@@ -243,30 +243,30 @@ const History = () => {
 
   return (
     <div className={`${jakarta.className} mx-auto items-center md:ml-28 lg:translate-y-8`}>
-      <div className="max-h-screen flex">
+      <div className="max-h-screen flex flex-col">
         <div className="w-full lg:w-4/5 container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-6">
             <div className="hidden lg:flex flex-col items-center gap-2">
               <Image src="/Logo sijaga.png" alt="Logo SiJaga" width={100} height={100} />
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+            <div className="flex items-center gap-3 md:gap-5 w-full justify-end">
+              <div className="bg-[#3650A2] text-white font-semibold px-4 py-2 rounded-full tracking-widest">
                 {profileName || "Memuat..."}
               </div>
-              <div className="rounded-full flex items-center justify-center">
-              <Image
-                src="/human.png"
-                alt="Profile Icon"
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
+              <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                <Image
+                  src="/human.png"
+                  alt="User Icon"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
               </div>
             </div>
           </div>
-
+  
           {/* Search & Filter */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 mt-10 lg:max-h-[500px] xl:min-h-[500px]">
+          <div className="bg-white rounded-2xl shadow-lg p-6 lg:max-h-[500px] xl:min-h-[500px]">
             <p className="text-2xl font-bold text-[#3650A2] pb-4">History</p>
             <div className="relative mb-6">
               <input
@@ -278,79 +278,79 @@ const History = () => {
               />
             </div>
             <div className="flex gap-4 mb-6">
-                {/* Time Filter */}
-                <div ref={dropdownRef} className="relative w-40">
-                  <button
-                    onClick={toggleTimeDropdown}
-                    className="flex items-center justify-between w-full px-4 py-2 rounded-full bg-gray-100"
-                  >
-                    {selectedTime}
-                    <Image src="/dropdown-icon.png" alt="Dropdown Icon" width={16} height={16} />
-                  </button>
-
-                  {isTimeDropdownOpen && (
-                    <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
-                      <ul className="py-2">
-                        <li
-                          onClick={() => handleSelection("Hari ini", "time")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Hari ini
-                        </li>
-                        <li
-                          onClick={() => handleSelection("Minggu ini", "time")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Minggu ini
-                        </li>
-                        <li
-                          onClick={() => handleSelection("Semua Waktu", "time")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Semua Waktu
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
-                {/* Condition Filter */}
-                <div ref={dropdownRef} className="relative w-40">
-                  <button
-                    onClick={toggleConditionDropdown}
-                    className="flex items-center justify-between w-full px-4 py-2 rounded-full bg-gray-100"
-                  >
-                    {selectedCondition}
-                    <Image src="/dropdown-icon.png" alt="Dropdown Icon" width={16} height={16} />
-                  </button>
-
-                  {isConditionDropdownOpen && (
-                    <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
-                      <ul className="py-2">
-                        <li
-                          onClick={() => handleSelection("ACTIVE", "condition")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Active
-                        </li>
-                        <li
-                          onClick={() => handleSelection("INACTIVE", "condition")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Inactive
-                        </li>
-                        <li
-                          onClick={() => handleSelection("Semua Kondisi", "condition")}
-                          className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
-                        >
-                          Semua Kondisi 
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
+              {/* Time Filter */}
+              <div ref={dropdownRef} className="relative w-40">
+                <button
+                  onClick={toggleTimeDropdown}
+                  className="flex items-center justify-between w-full px-4 py-2 rounded-full bg-gray-100"
+                >
+                  {selectedTime}
+                  <Image src="/dropdown-icon.png" alt="Dropdown Icon" width={16} height={16} />
+                </button>
+  
+                {isTimeDropdownOpen && (
+                  <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
+                    <ul className="py-2">
+                      <li
+                        onClick={() => handleSelection("Hari ini", "time")}
+                        className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
+                      >
+                        Hari ini
+                      </li>
+                      <li
+                        onClick={() => handleSelection("Minggu ini", "time")}
+                        className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
+                      >
+                        Minggu ini
+                      </li>
+                      <li
+                        onClick={() => handleSelection("Semua Waktu", "time")}
+                        className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
+                      >
+                        Semua Waktu
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
-
+  
+              {/* Condition Filter */}
+              <div ref={dropdownRef} className="relative w-40">
+                <button
+                  onClick={toggleConditionDropdown}
+                  className="flex items-center justify-between w-full px-4 py-2 rounded-full bg-gray-100"
+                >
+                  {selectedCondition}
+                  <Image src="/dropdown-icon.png" alt="Dropdown Icon" width={16} height={16} />
+                </button>
+  
+                {isConditionDropdownOpen && (
+                  <div className="absolute left-0 w-full mt-2 bg-white rounded-lg shadow-lg z-10">
+                    <ul className="py-2">
+                      <li
+                        onClick={() => handleSelection("ACTIVE", "condition")}
+                        className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
+                      >
+                        Active
+                      </li>
+                      <li
+                        onClick={() => handleSelection("INACTIVE", "condition")}
+                        className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
+                      >
+                        Inactive
+                      </li>
+                      <li
+                        onClick={() => handleSelection("Semua Kondisi", "condition")}
+                        className="px-4 py-2 cursor-pointer rounded-lg hover:bg-[#CBDCEB]"
+                      >
+                        Semua Kondisi
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+  
             <div className="overflow-y-auto max-h-[300px]">
               {error ? (
                 <p className="text-center text-red-500">{error}</p>
@@ -370,14 +370,17 @@ const History = () => {
                     {filteredHistoryData.map((item) => (
                       <tr key={item.id} className="hover:bg-gray-50">
                         <td className="py-3">
-                          {new Date(item.Timestamp).toLocaleString("en-US", {
-                            timeZone: "UTC",
-                          })}
+                        {loading
+                          ? "Memuat..."
+                          : new Date(item.Timestamp).toLocaleString() || "N/A"
+                          }
                         </td>
                         <td className="py-3">{item.name}</td>
                         <td
                           className={`${
-                            item.status === "active" || item.status === "ACTIVE" || item.status === "Active" ? "text-green-500" : "text-red-500"
+                            item.status === "buka" || item.status === "BUKA" || item.status === "Buka"
+                              ? "text-green-500"
+                              : "text-red-500"
                           } py-3 font-semibold`}
                         >
                           {item.status.toUpperCase()}
@@ -393,7 +396,7 @@ const History = () => {
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default History;
