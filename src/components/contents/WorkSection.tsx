@@ -24,7 +24,7 @@ export default function CaraKerja() {
                 </h1>
                 <div className="relative mt-4 z-0">
                 <Image
-                    src="/vector.png"
+                    src="/Vector2.png"
                     alt="vector"
                     width={372.5}
                     height={30}

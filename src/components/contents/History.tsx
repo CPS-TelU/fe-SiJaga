@@ -119,6 +119,7 @@ const History = () => {
     fetchHistory();
   }, [router]);
 
+  // Set up WebSocket connection
   useEffect(() => {
     const socket = io(URL, {
       transports: ["websocket", "polling"], // Prioritaskan websocket

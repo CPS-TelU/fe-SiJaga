@@ -4,7 +4,7 @@
 
   export default function FiturHero() {
       return (
-          <div className={`${jakarta.className} lg:min-h-screen md:pt-20 pt-20 flex items-center justify-center bg-[url('/Element.png')] bg-cover bg-center`}>
+          <div className={`${jakarta.className} lg:min-h-screen md:pt-10 pt-10 flex items-center justify-center bg-[url('/Element.png')] bg-cover bg-center`}>
         <div className="container mx-auto px-6 sm:px-8 md:px-32 grid grid-cols-2 md:grid-cols-2 items-center gap-8 md:gap-16">
           <div>
             <h1 className="realtive text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-6xl font-bold text-gray-800 leading-snug z-10">
@@ -12,7 +12,7 @@
             </h1>
             <div className="relative flex justify-start lg:justify-center md:justify-start md:mr-8 lg:ml-2 z-0">
               <Image
-                src="/Vector.png"
+                src="/Vector2.png"
                 alt="vector"
                 width={372.5}
                 height={30}

@@ -70,6 +70,9 @@ const DashboardSection = () => {
     const socket = io(API_BASE_URL, {
       transports: ["websocket", "polling"],
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      timeout: 20000,
     });
   
     socketRef.current = socket;
@@ -225,32 +228,26 @@ const DashboardSection = () => {
         </div>
 
       {/* Profil */}
-<div className="flex items-center space-x-2 mt-0 sm:mt-0 ml-auto w-full justify-end lg:ml-0">
-  <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
-    {profileName || "Memuat..."}
-  </span>
-  <div className="rounded-full flex items-center justify-center">
-    <Image
-      src="/human.png"
-      alt="User Icon"
-      width={40}
-      height={40}
-      className="rounded-full"
-    />
-  </div>
-</div>
-
-
-
+      <div className="flex items-center space-x-2 mt-0 sm:mt-0 ml-auto w-full justify-end lg:ml-0">
+        <span className="text-white bg-[#3650A2] rounded-full px-3 py-1 text-sm sm:text-base font-bold tracking-widest">
+          {profileName || "Memuat..."}
+        </span>
+        <div className="rounded-full flex items-center justify-center">
+          <Image
+            src="/human.png"
+            alt="User Icon"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>
       </div>
-
+      </div>
       {/* Main Content */}
       <div className="lg:mt-20">
-        
         <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#385CBD] to-[#3650A2] rounded-3xl p-6 shadow-lg pb-8 items-center">
           {/* Section Header */}
           <h1 className="text-white text-2xl md:text-3xl font-bold mb-4">Terkini</h1>
-
           {/* Main Grid */}
           <div className="grid grid-rows-2 gap-6">
             {/* Card 1: Pengguna Terakhir */}

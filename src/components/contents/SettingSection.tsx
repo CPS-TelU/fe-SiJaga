@@ -55,10 +55,11 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
     socket.on("cardIdDump_latest", (data: CardIdResponse) => {
       if (data?.card_id) {
         setCardId(data.card_id);
+        console.log("Card ID:", data.card_id);
       } else {
         console.error("Data card-scanned tidak valid:", data);
       }
-    });
+    });    
 
     socket.on("error", (err) => {
       console.error("WebSocket error:", err);
@@ -68,7 +69,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ isRegistered, onRegiste
       socket.off("cardIdDump_latest");
       socket.disconnect();
     };
-  }, []);
+  }, []);  
 
   const handleRegisterSuccess = () => {
     setCurrentImage("/scanimage-success.png");
